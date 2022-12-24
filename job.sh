@@ -1,5 +1,5 @@
-#!/bin/sh
-#PJM -L "node=16"
+#!/bin/bash
+#PJM -L "node=1"
 #PJM -L "rscgrp=small"
 #PJM -L "elapse=10:00"
 #PJM -g hp220271
