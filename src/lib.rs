@@ -2,13 +2,16 @@ pub fn add(left: usize, right: usize) -> usize {
   left + right
 }
 
-#[cfg(test)]
-mod tests {
-  use super::*;
+pub struct Universe {
 
-  #[test]
-  fn it_works() {
-    let result = add(2, 2);
-    assert_eq!(result, 4);
+}
+
+impl Drop for Universe {
+  fn drop(&mut self) {
+    fujitsu_mpi_sys::finalize().expect("Failed to finalize MPI");
   }
+}
+
+pub fn initialize() -> anyhow::Result<Universe> {
+  fujitsu_mpi_sys::initialize().map(|_| { Universe{} })
 }
