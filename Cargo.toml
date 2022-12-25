@@ -12,6 +12,5 @@ members = [
 ]
 
 [dependencies]
-libc = "0"
 anyhow = "1"
 fujitsu-mpi-sys = { path="./fujitsu-mpi-sys" }
