@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 anyhow = "1"
 fujitsu-mpi = { path = ".." }
+num_cpus = "1"
