@@ -1,10 +1,10 @@
 mod ffi;
 
-pub use ffi::MPI_Comm;
+pub use ffi::*;
 
-pub fn comm_world() -> ffi::MPI_Comm {
+pub fn comm_world() -> MPI_Comm {
   unsafe {
-    &mut ffi::ompi_mpi_comm_world as *mut ffi::ompi_predefined_communicator_t as ffi::MPI_Comm
+    &mut ompi_mpi_comm_world as *mut ompi_predefined_communicator_t as MPI_Comm
   }
 }
 
@@ -17,42 +17,42 @@ pub fn initialize() -> anyhow::Result<()> {
   }
   let mut argv_ptr = argv.as_mut_ptr();
   let r = unsafe {
-    ffi::MPI_Init(&mut argc as *mut i32, &mut argv_ptr as *mut *mut *mut u8) as u32
+    MPI_Init(&mut argc as *mut i32, &mut argv_ptr as *mut *mut *mut u8) as u32
   };
   match r {
-    ffi::MPI_SUCCESS => Ok(()),
+    MPI_SUCCESS => Ok(()),
     _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
   }
 }
 
 pub fn finalize() -> anyhow::Result<()> {
   let r = unsafe {
-    ffi::MPI_Finalize() as u32
+    MPI_Finalize() as u32
   };
   match r {
-    ffi::MPI_SUCCESS => Ok(()),
+    MPI_SUCCESS => Ok(()),
     _ => Err(anyhow::Error::msg(format!("[MPI_Finalize] Unknown code: {}", r))),
   }
 }
 
-pub fn comm_size(comm: ffi::MPI_Comm) -> anyhow::Result<usize> {
+pub fn comm_size(comm: MPI_Comm) -> anyhow::Result<usize> {
   let mut size: i32 = 0;
   let r = unsafe {
-    ffi::MPI_Comm_size(comm, &mut size) as u32
+    MPI_Comm_size(comm, &mut size) as u32
   };
   match r {
-    ffi::MPI_SUCCESS => Ok(size as usize),
+    MPI_SUCCESS => Ok(size as usize),
     _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
   }
 }
 
-pub fn comm_rank(comm: ffi::MPI_Comm) -> anyhow::Result<usize> {
+pub fn comm_rank(comm: MPI_Comm) -> anyhow::Result<usize> {
   let mut rank: i32 = 0;
   let r = unsafe {
-    ffi::MPI_Comm_rank(comm, &mut rank) as u32
+    MPI_Comm_rank(comm, &mut rank) as u32
   };
   match r {
-    ffi::MPI_SUCCESS => Ok(rank as usize),
+    MPI_SUCCESS => Ok(rank as usize),
     _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
   }
 }
