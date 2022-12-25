@@ -15,7 +15,7 @@ impl Universe {
 }
 
 pub struct Communicator {
-  comm: *mut libc::c_void,
+  comm: fujitsu_mpi_sys::MPI_Comm,
 }
 
 impl Communicator {
