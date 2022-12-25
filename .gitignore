@@ -1,5 +1,6 @@
-/output.log
-/output.png
+/output.*
+/job.sh.*.err
+/job.sh.*.out
 
 # Created by https://www.toptal.com/developers/gitignore/api/clion,rust,VisualStudioCode
 # Edit at https://www.toptal.com/developers/gitignore?templates=clion,rust,VisualStudioCode
