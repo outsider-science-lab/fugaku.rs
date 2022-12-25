@@ -14,6 +14,7 @@ impl Communicator {
       comm,
     }
   }
+
   pub fn size(&self) -> anyhow::Result<usize> {
     let mut size: i32 = 0;
     let r = unsafe {
@@ -24,6 +25,7 @@ impl Communicator {
       _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
     }
   }
+
   pub fn rank(&self) -> anyhow::Result<usize> {
     let mut rank: i32 = 0;
     let r = unsafe {
