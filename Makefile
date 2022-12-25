@@ -3,7 +3,10 @@
 .PHONY: all
 
 all: FORCE
-	bash ./build.sh
+	./build.sh
+
+gen: FORCE
+	./fujitsu-mpi-sys/gen.sh
 
 .PHONY: build
 build: all;
