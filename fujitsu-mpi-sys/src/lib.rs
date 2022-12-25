@@ -5,13 +5,13 @@ extern "C" {
   fn MPI_Finalize() -> c_int;
   fn MPI_Comm_size(comm: *mut c_void, p_size: *mut c_int) -> c_int;
   fn MPI_Comm_rank(comm: *mut c_void, p_rank: *mut c_int) -> c_int;
-  pub static ompi_mpi_comm_world: *mut c_void;
+  static mut ompi_mpi_comm_world: c_void;
 }
 
 const MPI_SUCCESS: c_int = 0;
 pub fn comm_world() -> *mut c_void {
   unsafe {
-    ompi_mpi_comm_world
+    &mut ompi_mpi_comm_world
   }
 }
 
