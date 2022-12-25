@@ -1,6 +1,8 @@
-pub fn add(left: usize, right: usize) -> usize {
-  left + right
-}
+use fujitsu_mpi_sys as ffi;
+use ffi::{
+  MPI_Comm,
+  MPI_SUCCESS,
+};
 
 pub struct Universe {
 
@@ -9,7 +11,9 @@ pub struct Universe {
 impl Universe {
   pub fn world(&self) -> Communicator {
     Communicator {
-      comm: fujitsu_mpi_sys::comm_world(),
+      comm: unsafe {
+        &mut ffi::ompi_mpi_comm_world as *mut ffi::ompi_predefined_communicator_t as MPI_Comm
+      }
     }
   }
 }
@@ -20,19 +24,51 @@ pub struct Communicator {
 
 impl Communicator {
   pub fn size(&self) -> anyhow::Result<usize> {
-    fujitsu_mpi_sys::comm_size(self.comm)
+    let mut size: i32 = 0;
+    let r = unsafe {
+      ffi::MPI_Comm_size(self.comm, &mut size) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(size as usize),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
+    }
   }
   pub fn rank(&self) -> anyhow::Result<usize> {
-    fujitsu_mpi_sys::comm_rank(self.comm)
+    let mut rank: i32 = 0;
+    let r = unsafe {
+      ffi::MPI_Comm_rank(self.comm, &mut rank) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(rank as usize),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
+    }
+  }
+}
+
+pub fn initialize() -> anyhow::Result<Universe> {
+  let args: Vec<String> = std::env::args().collect();
+  let mut argc = args.len() as i32;
+  let mut argv: Vec<*mut u8> = Vec::new();
+  for arg in &args {
+    argv.push(arg.as_ptr() as *mut u8);
+  }
+  let mut argv_ptr = argv.as_mut_ptr();
+  let r = unsafe {
+    ffi::MPI_Init(&mut argc as *mut i32, &mut argv_ptr as *mut *mut *mut u8) as u32
+  };
+  match r {
+    MPI_SUCCESS => Ok(Universe {}),
+    _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
   }
 }
 
 impl Drop for Universe {
   fn drop(&mut self) {
-    fujitsu_mpi_sys::finalize().expect("Failed to finalize MPI");
+    let r = unsafe {
+      ffi::MPI_Finalize() as u32
+    };
+    if r != MPI_SUCCESS {
+      // TODO: Error handling?
+    }
   }
-}
-
-pub fn initialize() -> anyhow::Result<Universe> {
-  fujitsu_mpi_sys::initialize().map(|_| { Universe{} })
 }
