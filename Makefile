@@ -9,7 +9,7 @@ all: FORCE
 build: all;
 
 .PHONY: run
-run: FORCE
+run: build
 	pjsub job.sh
 	pjstat
 
