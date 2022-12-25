@@ -1,4 +1,5 @@
 #! /bin/bash
+cd "$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
 source "/vol0004/apps/oss/spack/share/spack/setup-env.sh"
 spack load /pvhwhce # load LLVM 12
 
