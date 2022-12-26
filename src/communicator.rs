@@ -3,6 +3,7 @@ use ffi::{
   MPI_Comm,
   MPI_SUCCESS,
 };
+use crate::types;
 
 pub struct Communicator {
   comm: MPI_Comm,
@@ -37,12 +38,14 @@ impl Communicator {
     }
   }
 
-  pub fn send_f64(&self, buff: &mut [f64], to: usize, tag: i32) -> anyhow::Result<()> {
+  pub fn send<T>(&self, buff: &mut [T], to: usize, tag: i32) -> anyhow::Result<()>
+    where T: types::DataType
+  {
     let r = unsafe {
       ffi::MPI_Send(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
-        &mut ffi::ompi_mpi_double as *mut ffi::ompi_predefined_datatype_t as ffi::MPI_Datatype,
+        T::mpi_data_type(),
         to as i32,
         tag,
         self.comm,
@@ -54,7 +57,9 @@ impl Communicator {
     }
   }
 
-  pub fn recv_f64(&self, buff: &mut [f64], from: usize, tag: i32) -> anyhow::Result<()> {
+  pub fn recv<T>(&self, buff: &mut [T], from: usize, tag: i32) -> anyhow::Result<()>
+    where T: types::DataType
+  {
     let mut status: ffi::MPI_Status = unsafe {
       std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
     };
@@ -62,7 +67,7 @@ impl Communicator {
       ffi::MPI_Recv(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
-        &mut ffi::ompi_mpi_double as *mut ffi::ompi_predefined_datatype_t as ffi::MPI_Datatype,
+        T::mpi_data_type(),
         from as i32,
         tag,
         self.comm,
