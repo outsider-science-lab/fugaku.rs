@@ -3,7 +3,7 @@ use ffi::{
   MPI_Comm,
   MPI_SUCCESS,
 };
-use crate::types;
+use crate::mpi::data_types;
 
 pub struct Communicator {
   comm: MPI_Comm,
@@ -39,7 +39,7 @@ impl Communicator {
   }
 
   pub fn send<T>(&self, buff: &mut [T], to: usize, tag: i32) -> anyhow::Result<()>
-    where T: types::DataType
+    where T: data_types::DataType
   {
     let r = unsafe {
       ffi::MPI_Send(
@@ -58,7 +58,7 @@ impl Communicator {
   }
 
   pub fn recv<T>(&self, buff: &mut [T], from: usize, tag: i32) -> anyhow::Result<()>
-    where T: types::DataType
+    where T: data_types::DataType
   {
     let mut status: ffi::MPI_Status = unsafe {
       std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()

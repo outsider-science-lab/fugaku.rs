@@ -1,5 +1,5 @@
 mod universe;
 mod communicator;
-mod types;
+mod mpi;
 
 pub use universe::initialize;
