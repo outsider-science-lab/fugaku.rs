@@ -27,7 +27,7 @@ pub fn initialize() -> anyhow::Result<Universe> {
 }
 
 impl Universe {
-  pub fn world(&self) -> Communicator {
+  pub fn world(&mut self) -> Communicator {
     Communicator::new(unsafe {
       &mut ffi::ompi_mpi_comm_world as *mut ffi::ompi_predefined_communicator_t as MPI_Comm
     })

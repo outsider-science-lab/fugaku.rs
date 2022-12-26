@@ -1,7 +1,7 @@
 use fujitsu_mpi_sys as ffi;
 use ffi::{
   MPI_Comm,
-  MPI_SUCCESS,
+  MPI_SUCCESS, MPI_Bcast,
 };
 use crate::mpi::data_types;
 
@@ -16,7 +16,7 @@ impl Communicator {
     }
   }
 
-  pub fn size(&self) -> anyhow::Result<usize> {
+  pub fn size(&mut self) -> anyhow::Result<usize> {
     let mut size: i32 = 0;
     let r = unsafe {
       ffi::MPI_Comm_size(self.comm, &mut size) as u32
@@ -27,7 +27,7 @@ impl Communicator {
     }
   }
 
-  pub fn rank(&self) -> anyhow::Result<usize> {
+  pub fn rank(&mut self) -> anyhow::Result<usize> {
     let mut rank: i32 = 0;
     let r = unsafe {
       ffi::MPI_Comm_rank(self.comm, &mut rank) as u32
@@ -38,7 +38,7 @@ impl Communicator {
     }
   }
 
-  pub fn send<T>(&self, buff: &mut [T], to: usize, tag: i32) -> anyhow::Result<()>
+  pub fn send<T>(&mut self, buff: &mut [T], to: usize, tag: i32) -> anyhow::Result<()>
     where T: data_types::DataType
   {
     let r = unsafe {
@@ -57,7 +57,7 @@ impl Communicator {
     }
   }
 
-  pub fn recv<T>(&self, buff: &mut [T], from: usize, tag: i32) -> anyhow::Result<()>
+  pub fn recv<T>(&mut self, buff: &mut [T], from: usize, tag: i32) -> anyhow::Result<()>
     where T: data_types::DataType
   {
     let mut status: ffi::MPI_Status = unsafe {
@@ -77,6 +77,24 @@ impl Communicator {
     match r {
       MPI_SUCCESS => Ok(()),
       _ => Err(anyhow::Error::msg(format!("[MPI_Recv] Unknown code: {}", r))),
+    }
+  }
+
+  pub fn broadcast<T>(&mut self, buff: &mut [T], root: usize) -> anyhow::Result<()>
+    where T: data_types::DataType
+  {
+    let r = unsafe {
+      MPI_Bcast(
+        buff.as_mut_ptr() as *mut std::os::raw::c_void, 
+        buff.len() as i32,
+        T::mpi_data_type(),
+        root as i32,
+        self.comm
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Bcast] Unknown code: {}", r))),
     }
   }
 }

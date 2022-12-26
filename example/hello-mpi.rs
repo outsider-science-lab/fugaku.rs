@@ -1,4 +1,7 @@
 fn main() -> anyhow::Result<()> {
-  fujitsu_mpi::initialize()?;
+  let mut universe = fujitsu_mpi::initialize()?;
+  println!("Initialized");
+  let mut world = universe.world();
+  println!("Size: {}, rank: {}", world.size()?, world.rank()?);
   Ok(())
 }
