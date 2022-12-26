@@ -7,5 +7,5 @@ fn main() -> anyhow::Result<()> {
   let mut array: [u64; 3] = [1, 2, 3];
   world.broadcast(&mut array, 0)?;
   println!("Recv: {:?}", array);
-Ok(())
+  Ok(())
 }
