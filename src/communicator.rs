@@ -1,7 +1,7 @@
 use fujitsu_mpi_sys as ffi;
 use ffi::{
   MPI_Comm,
-  MPI_SUCCESS, MPI_Bcast,
+  MPI_SUCCESS,
 };
 use crate::mpi::data_types;
 
@@ -84,12 +84,33 @@ impl Communicator {
     where T: data_types::DataType
   {
     let r = unsafe {
-      MPI_Bcast(
+      ffi::MPI_Bcast(
         buff.as_mut_ptr() as *mut std::os::raw::c_void, 
         buff.len() as i32,
         T::mpi_data_type(),
         root as i32,
         self.comm
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Bcast] Unknown code: {}", r))),
+    }
+  }
+
+  pub fn scatter<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
+    where T: data_types::DataType
+  {
+    let r = unsafe {
+      ffi::MPI_Scatter(
+        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        send_buff.len() as i32,
+        T::mpi_data_type(),
+        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        recv_buff.len() as i32,
+        T::mpi_data_type(),
+        root as i32,
+        self.comm,
       ) as u32
     };
     match r {
