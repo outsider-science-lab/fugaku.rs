@@ -3,6 +3,7 @@
 #PJM -L "rscgrp=small"
 #PJM -L "elapse=10:00"
 #PJM -g hp220271
+#PJM -s
 #PJM -x PJM_LLIO_GFSCACHE=/vol0004
 
 # See https://www.fugaku.r-ccs.riken.jp/doc_root/en/user_guides/FugakuSpackGuide/intro.html#sourcing-environment-script
