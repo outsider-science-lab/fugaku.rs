@@ -15,7 +15,7 @@
 # See https://www.fugaku.r-ccs.riken.jp/doc_root/en/user_guides/use_latest/LyeredStorageAndLLIO/TheSecondLayerStrage.html#common-file-distribution-function-llio-transfer
 #/usr/bin/llio_transfer <path_to_file>
 
-cd "$(cd "$(dirname "$(readlink -f "$0")")" && pwd)"
+cd "$(cd "$(dirname "$(readlink -f "$(git rev-parse --show-toplevel)")")" && pwd)"
 
 source /vol0004/apps/oss/llvm-v14.0.1/init.sh
 
