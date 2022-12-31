@@ -10,7 +10,9 @@ pub struct Communicator {
 }
 
 impl Communicator {
-  pub fn new(comm: MPI_Comm,) -> Self {
+  pub fn new(
+    comm: MPI_Comm,
+  ) -> Self {
     Self {
       comm,
     }
@@ -101,8 +103,10 @@ impl Communicator {
   pub fn scatter<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
     where T: data_types::DataType
   {
-    if root == 0 {
-      let required = self.size()? * recv_buff.len();
+    let size = self.size()?;
+    let rank = self.rank()?;
+    if rank == root {
+      let required = size * recv_buff.len();
       if required != send_buff.len() {
         return Err(anyhow::Error::msg(format!("SendBuf size not match. Required: {} != Actual: {}", required, send_buff.len())));
       }
@@ -110,7 +114,7 @@ impl Communicator {
     let r = unsafe {
       ffi::MPI_Scatter(
         send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        send_buff.len() as i32,
+        recv_buff.len() as i32,
         T::mpi_data_type(),
         recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
         recv_buff.len() as i32,
