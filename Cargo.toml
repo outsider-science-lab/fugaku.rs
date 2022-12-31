@@ -30,3 +30,9 @@ name = "scatter"
 
 [[example]]
 name = "gather"
+
+[[example]]
+name = "reduce"
+
+[[example]]
+name = "all_reduce"

@@ -158,7 +158,7 @@ impl Communicator {
     }
   }
 
-  pub fn reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op , root: usize) -> anyhow::Result<()>
+  pub fn reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op, root: usize) -> anyhow::Result<()>
     where T: mpi::DataType
   {
     let rank = self.rank()?;
@@ -176,6 +176,29 @@ impl Communicator {
         T::to_ffi(),
         op.to_ffi(),
         root as i32,
+        self.comm,
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Reduce] Unknown code: {}", r))),
+    }
+  }
+
+  pub fn all_reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op) -> anyhow::Result<()>
+    where T: mpi::DataType
+  {
+    if send_buff.len() != recv_buff.len() {
+      return Err(anyhow::Error::msg(format!("SendBuf and RecvBuf must have the same length. SendBuf: {} != RecvBuf: {}", send_buff.len(), recv_buff.len())));
+    }
+    let count = send_buff.len();
+    let r = unsafe {
+      ffi::MPI_Allreduce(
+        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        count as i32,
+        T::to_ffi(),
+        op.to_ffi(),
         self.comm,
       ) as u32
     };

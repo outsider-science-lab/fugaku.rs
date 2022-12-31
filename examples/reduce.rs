@@ -4,6 +4,7 @@ fn main() -> anyhow::Result<()> {
   let mut world = universe.world();
   let size = world.size()?;
   let rank = world.rank()?;
+  let root: usize = 0;
   println!("size = {}, rank = {}", size, rank);
   let mut send_buff: Vec<u64> = if rank == 0 {
     vec![1, 2, 3]
@@ -12,10 +13,11 @@ fn main() -> anyhow::Result<()> {
   };
   let mut recv_buff: Vec<u64> = vec![0; 3];
   println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
-  world.all_reduce(
+  world.reduce(
     &mut send_buff,
     &mut recv_buff,
     fujitsu_mpi::Op::Sum,
+    root,
   )?;
   println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
   Ok(())
