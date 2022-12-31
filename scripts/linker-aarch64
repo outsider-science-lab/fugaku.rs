@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# To debug linking, enable this line
+# echo "$@" > link-flags.debug.txt
+
+mpifccpx "$@"

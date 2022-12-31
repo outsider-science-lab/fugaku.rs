@@ -2,4 +2,4 @@
 target = "aarch64-unknown-linux-gnu"
 
 [target.aarch64-unknown-linux-gnu]
-linker = "mpifccpx"
+linker = "scripts/linker-aarch64"
