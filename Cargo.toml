@@ -14,3 +14,9 @@ members = [
 [dependencies]
 anyhow = "1"
 fujitsu-mpi-sys = { path="./fujitsu-mpi-sys" }
+
+[[example]]
+name = "hello-mpi"
+
+[[example]]
+name = "send-recv"
