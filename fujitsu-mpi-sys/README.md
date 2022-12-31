@@ -1,6 +1,6 @@
 # fujitsu-mpi-sys
 
-Native C bidings to Fujitsu MPI.
+Native C bidings to Fujitsu MPI, for Rust.
 
 ## How to generate `src/ffi.rs`
 
