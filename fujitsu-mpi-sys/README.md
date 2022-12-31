@@ -12,4 +12,4 @@ bash gen.sh
 
 # References
 
-- [Manual](https://software.fujitsu.com/cgi-bin/manualps.cgi?keyword=Technical+Computing+Suite&ostype=all&langtype=ja&viewtype=icon&btn_submit=)
+- [Manual](https://software.fujitsu.com/cgi-bin/manualps.cgi?keyword=Technical+Computing+Suite&ostype=all&langtype=ja)
