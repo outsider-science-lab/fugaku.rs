@@ -128,4 +128,33 @@ impl Communicator {
       _ => Err(anyhow::Error::msg(format!("[MPI_Bcast] Unknown code: {}", r))),
     }
   }
+
+  pub fn gather<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
+    where T: data_types::DataType
+  {
+    let size = self.size()?;
+    let rank = self.rank()?;
+    if rank == root {
+      let required = size * send_buff.len();
+      if required != recv_buff.len() {
+        return Err(anyhow::Error::msg(format!("SendBuf size not match. Required: {} != Actual: {}", required, send_buff.len())));
+      }
+    }
+    let r = unsafe {
+      ffi::MPI_Gather(
+        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        send_buff.len() as i32,
+        T::mpi_data_type(),
+        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        send_buff.len() as i32,
+        T::mpi_data_type(),
+        root as i32,
+        self.comm,
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Bcast] Unknown code: {}", r))),
+    }
+  }
 }
