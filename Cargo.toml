@@ -20,3 +20,6 @@ name = "hello-mpi"
 
 [[example]]
 name = "send-recv"
+
+[[example]]
+name = "scatter"
