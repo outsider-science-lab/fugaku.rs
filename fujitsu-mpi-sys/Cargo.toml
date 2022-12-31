@@ -2,8 +2,12 @@
 name = "fujitsu-mpi-sys"
 version = "0.1.0"
 edition = "2021"
+authors = ["Kaede Fujisaki <kaede@hexe.net>"]
+description = "Native bindings to fujitsu MPI library."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-file = "LICENSE"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1"
