@@ -9,4 +9,6 @@ set -eux
 
 compiler_dir="$(cd "$(dirname "$(which mpifccpx)")" && cd .. && pwd)"
 
-bindgen "${compiler_dir}/include/mpi/fujitsu/mpi.h" -o src/ffi.rs
+rm -f src/ffi.rs
+echo "#![allow(warnings)]" > src/ffi.rs
+bindgen "${compiler_dir}/include/mpi/fujitsu/mpi.h" >> src/ffi.rs
