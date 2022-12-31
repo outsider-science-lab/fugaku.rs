@@ -6,4 +6,7 @@ spack load /pvhwhce # load LLVM 12
 set -eux
 # TO INSTALL:
 #   cargo install bindgen-cli
-bindgen /opt/FJSVxtclanga/tcsds-1.2.36/include/mpi/fujitsu/mpi.h -o src/ffi.rs
+
+compiler_dir="$(cd "$(dirname "$(which mpifccpx)")" && cd .. && pwd)"
+
+bindgen "${compiler_dir}/include/mpi/fujitsu/mpi.h" -o src/ffi.rs
