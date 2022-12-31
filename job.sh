@@ -1,5 +1,6 @@
 #!/bin/bash
 #PJM -L "node=2"
+#PJM --mpi "shape=2"
 #PJM -L "rscgrp=small"
 #PJM -L "elapse=10:00"
 #PJM -g hp220271
