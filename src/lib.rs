@@ -1,5 +1,6 @@
 mod universe;
 mod communicator;
-mod mpi;
 
+// Exposed
+pub mod mpi;
 pub use universe::initialize;

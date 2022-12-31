@@ -3,7 +3,7 @@ use ffi::{
   MPI_Comm,
   MPI_SUCCESS,
 };
-use crate::mpi::data_types;
+use crate::mpi;
 
 pub struct Communicator {
   comm: MPI_Comm,
@@ -41,13 +41,13 @@ impl Communicator {
   }
 
   pub fn send<T>(&mut self, buff: &mut [T], to: usize, tag: i32) -> anyhow::Result<()>
-    where T: data_types::DataType
+    where T: mpi::DataType
   {
     let r = unsafe {
       ffi::MPI_Send(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
-        T::mpi_data_type(),
+        T::to_ffi(),
         to as i32,
         tag,
         self.comm,
@@ -60,7 +60,7 @@ impl Communicator {
   }
 
   pub fn recv<T>(&mut self, buff: &mut [T], from: usize, tag: i32) -> anyhow::Result<()>
-    where T: data_types::DataType
+    where T: mpi::DataType
   {
     let mut status: ffi::MPI_Status = unsafe {
       std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
@@ -69,7 +69,7 @@ impl Communicator {
       ffi::MPI_Recv(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
-        T::mpi_data_type(),
+        T::to_ffi(),
         from as i32,
         tag,
         self.comm,
@@ -83,13 +83,13 @@ impl Communicator {
   }
 
   pub fn broadcast<T>(&mut self, buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: data_types::DataType
+    where T: mpi::DataType
   {
     let r = unsafe {
       ffi::MPI_Bcast(
         buff.as_mut_ptr() as *mut std::os::raw::c_void, 
         buff.len() as i32,
-        T::mpi_data_type(),
+        T::to_ffi(),
         root as i32,
         self.comm
       ) as u32
@@ -101,7 +101,7 @@ impl Communicator {
   }
 
   pub fn scatter<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: data_types::DataType
+    where T: mpi::DataType
   {
     let size = self.size()?;
     let rank = self.rank()?;
@@ -115,22 +115,22 @@ impl Communicator {
       ffi::MPI_Scatter(
         send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
         recv_buff.len() as i32,
-        T::mpi_data_type(),
+        T::to_ffi(),
         recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
         recv_buff.len() as i32,
-        T::mpi_data_type(),
+        T::to_ffi(),
         root as i32,
         self.comm,
       ) as u32
     };
     match r {
       MPI_SUCCESS => Ok(()),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Bcast] Unknown code: {}", r))),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Scatter] Unknown code: {}", r))),
     }
   }
 
   pub fn gather<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: data_types::DataType
+    where T: mpi::DataType
   {
     let size = self.size()?;
     let rank = self.rank()?;
@@ -144,17 +144,44 @@ impl Communicator {
       ffi::MPI_Gather(
         send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
         send_buff.len() as i32,
-        T::mpi_data_type(),
+        T::to_ffi(),
         recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
         send_buff.len() as i32,
-        T::mpi_data_type(),
+        T::to_ffi(),
         root as i32,
         self.comm,
       ) as u32
     };
     match r {
       MPI_SUCCESS => Ok(()),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Bcast] Unknown code: {}", r))),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Gather] Unknown code: {}", r))),
+    }
+  }
+
+  pub fn reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op , root: usize) -> anyhow::Result<()>
+    where T: mpi::DataType
+  {
+    let rank = self.rank()?;
+    if rank == root {
+      if send_buff.len() != recv_buff.len() {
+        return Err(anyhow::Error::msg(format!("SendBuf and RecvBuf must have the same length. SendBuf: {} != RecvBuf: {}", send_buff.len(), recv_buff.len())));
+      }
+    }
+    let count = send_buff.len();
+    let r = unsafe {
+      ffi::MPI_Reduce(
+        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        count as i32,
+        T::to_ffi(),
+        op.to_ffi(),
+        root as i32,
+        self.comm,
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Reduce] Unknown code: {}", r))),
     }
   }
 }

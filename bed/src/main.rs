@@ -11,16 +11,13 @@ fn main() -> anyhow::Result<()> {
   } else {
     vec![4, 5, 6]
   };
-  let mut recv_buff: Vec<u64> = if rank == root {
-    vec![0; 6]
-  } else {
-    vec![]
-  };
+  let mut recv_buff: Vec<u64> = vec![0; 3];
   println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
-  world.gather(
+  world.reduce(
     &mut send_buff,
     &mut recv_buff,
-    0,
+    fujitsu_mpi::mpi::Op::Sum,
+    root,
   )?;
   println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
   Ok(())
