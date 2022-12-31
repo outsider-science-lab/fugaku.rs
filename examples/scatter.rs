@@ -12,12 +12,12 @@ fn main() -> anyhow::Result<()> {
     vec![]
   };
   let mut recv_buff: Vec<u64> = vec![0; 3];
-  println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+  println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
   world.scatter(
     &mut send_buff,
     &mut recv_buff,
     0,
   )?;
-  println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+  println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
   Ok(())
 }

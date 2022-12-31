@@ -12,13 +12,13 @@ fn main() -> anyhow::Result<()> {
     vec![4, 5, 6]
   };
   let mut recv_buff: Vec<u64> = vec![0; 3];
-  println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+  println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
   world.reduce(
     &mut send_buff,
     &mut recv_buff,
     fujitsu_mpi::Op::Sum,
     root,
   )?;
-  println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+  println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
   Ok(())
 }
