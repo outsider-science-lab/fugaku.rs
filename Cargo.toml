@@ -27,3 +27,6 @@ name = "send-recv"
 
 [[example]]
 name = "scatter"
+
+[[example]]
+name = "gather"
