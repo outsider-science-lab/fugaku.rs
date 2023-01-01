@@ -115,6 +115,36 @@ impl Communicator {
     }
   }
 
+  pub fn send_recv_replace<T>(
+    &mut self, buff: &mut [T],
+    send_peer: usize, send_tag: usize,
+    recv_peer: usize, recv_tag: usize,
+  ) -> anyhow::Result<()>
+    where
+      T: mpi::DataType,
+  {
+    let mut status: ffi::MPI_Status = unsafe {
+      std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
+    };
+    let r = unsafe {
+      ffi::MPI_Sendrecv_replace(
+        buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        buff.len() as i32,
+        T::to_ffi(),
+        send_peer as i32,
+        send_tag as i32,
+        recv_peer as i32,
+        recv_tag as i32,
+        self.comm,
+        &mut status,
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Sendrecv] Unknown code: {}", r))),
+    }
+  }
+
   pub fn broadcast<T>(&mut self, buff: &mut [T], root: usize) -> anyhow::Result<()>
     where T: mpi::DataType,
   {

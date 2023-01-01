@@ -29,6 +29,9 @@ name = "one-to-one"
 name = "send-recv"
 
 [[example]]
+name = "send-recv-replace"
+
+[[example]]
 name = "scatter"
 
 [[example]]
