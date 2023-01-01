@@ -40,15 +40,15 @@ impl Communicator {
     }
   }
 
-  pub fn send<T>(&mut self, buff: &mut [T], to: usize, tag: i32) -> anyhow::Result<()>
-    where T: mpi::DataType
+  pub fn send<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
+    where T: mpi::DataType,
   {
     let r = unsafe {
       ffi::MPI_Send(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
         T::to_ffi(),
-        to as i32,
+        peer as i32,
         tag,
         self.comm,
       ) as u32
@@ -59,8 +59,8 @@ impl Communicator {
     }
   }
 
-  pub fn recv<T>(&mut self, buff: &mut [T], from: usize, tag: i32) -> anyhow::Result<()>
-    where T: mpi::DataType
+  pub fn recv<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
+    where T: mpi::DataType,
   {
     let mut status: ffi::MPI_Status = unsafe {
       std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
@@ -70,7 +70,7 @@ impl Communicator {
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
         T::to_ffi(),
-        from as i32,
+        peer as i32,
         tag,
         self.comm,
         &mut status,
@@ -82,8 +82,41 @@ impl Communicator {
     }
   }
 
+  pub fn send_recv<T, U>(
+    &mut self, send_buff: &mut [T], send_peer: usize, send_tag: usize,
+    recv_buff: &mut [U], recv_peer: usize, recv_tag: usize,
+  ) -> anyhow::Result<()>
+    where
+      T: mpi::DataType,
+      U: mpi::DataType,
+  {
+    let mut status: ffi::MPI_Status = unsafe {
+      std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
+    };
+    let r = unsafe {
+      ffi::MPI_Sendrecv(
+        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        send_buff.len() as i32,
+        T::to_ffi(),
+        send_peer as i32,
+        send_tag as i32,
+        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        recv_buff.len() as i32,
+        U::to_ffi(),
+        recv_peer as i32,
+        recv_tag as i32,
+        self.comm,
+        &mut status,
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Sendrecv] Unknown code: {}", r))),
+    }
+  }
+
   pub fn broadcast<T>(&mut self, buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType
+    where T: mpi::DataType,
   {
     let r = unsafe {
       ffi::MPI_Bcast(
@@ -101,7 +134,7 @@ impl Communicator {
   }
 
   pub fn scatter<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType
+    where T: mpi::DataType,
   {
     let size = self.size()?;
     let rank = self.rank()?;
@@ -130,7 +163,7 @@ impl Communicator {
   }
 
   pub fn gather<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType
+    where T: mpi::DataType,
   {
     let size = self.size()?;
     let rank = self.rank()?;
@@ -159,7 +192,7 @@ impl Communicator {
   }
 
   pub fn reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op, root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType
+    where T: mpi::DataType,
   {
     let rank = self.rank()?;
     if rank == root {
@@ -186,7 +219,7 @@ impl Communicator {
   }
 
   pub fn all_reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op) -> anyhow::Result<()>
-    where T: mpi::DataType
+    where T: mpi::DataType,
   {
     if send_buff.len() != recv_buff.len() {
       return Err(anyhow::Error::msg(format!("SendBuf and RecvBuf must have the same length. SendBuf: {} != RecvBuf: {}", send_buff.len(), recv_buff.len())));
@@ -204,7 +237,7 @@ impl Communicator {
     };
     match r {
       MPI_SUCCESS => Ok(()),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Reduce] Unknown code: {}", r))),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Allreduce] Unknown code: {}", r))),
     }
   }
 }

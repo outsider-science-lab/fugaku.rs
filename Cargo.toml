@@ -23,6 +23,9 @@ fujitsu-mpi-sys = { path="./fujitsu-mpi-sys" }
 name = "hello-mpi"
 
 [[example]]
+name = "one-to-one"
+
+[[example]]
 name = "send-recv"
 
 [[example]]
