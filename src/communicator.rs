@@ -6,6 +6,12 @@ use ffi::{
 use crate::mpi;
 use crate::request::Request;
 
+fn malloc<T>() -> T {
+  return unsafe {
+    std::mem::MaybeUninit::<T>::zeroed().assume_init()
+  };
+}
+
 pub struct Communicator {
   comm: MPI_Comm,
 }
@@ -63,9 +69,7 @@ impl Communicator {
   pub fn send_async<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<Request>
     where T: mpi::DataType,
   {
-    let mut req: ffi::MPI_Request = unsafe {
-      std::mem::MaybeUninit::<ffi::MPI_Request>::zeroed().assume_init()
-    };
+    let mut req: ffi::MPI_Request = malloc();
     let r = unsafe {
       ffi::MPI_Isend(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
@@ -86,9 +90,7 @@ impl Communicator {
   pub fn recv<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
     where T: mpi::DataType,
   {
-    let mut status: ffi::MPI_Status = unsafe {
-      std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
-    };
+    let mut status: ffi::MPI_Status = malloc();
     let r = unsafe {
       ffi::MPI_Recv(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
@@ -109,9 +111,7 @@ impl Communicator {
   pub fn recv_async<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<Request>
     where T: mpi::DataType,
   {
-    let mut req: ffi::MPI_Request = unsafe {
-      std::mem::MaybeUninit::<ffi::MPI_Request>::zeroed().assume_init()
-    };
+    let mut req: ffi::MPI_Request = malloc();
     let r = unsafe {
       ffi::MPI_Irecv(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
@@ -137,9 +137,7 @@ impl Communicator {
       T: mpi::DataType,
       U: mpi::DataType,
   {
-    let mut status: ffi::MPI_Status = unsafe {
-      std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
-    };
+    let mut status: ffi::MPI_Status = malloc();
     let r = unsafe {
       ffi::MPI_Sendrecv(
         send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
@@ -170,9 +168,7 @@ impl Communicator {
     where
       T: mpi::DataType,
   {
-    let mut status: ffi::MPI_Status = unsafe {
-      std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
-    };
+    let mut status: ffi::MPI_Status = malloc();
 
     let r = unsafe {
       ffi::MPI_Sendrecv_replace(
@@ -320,9 +316,7 @@ impl Communicator {
   }
 
   pub fn wait_request(&mut self, req: &mut Request) -> anyhow::Result<()> {
-    let mut status: ffi::MPI_Status = unsafe {
-      std::mem::MaybeUninit::<ffi::MPI_Status>::zeroed().assume_init()
-    };
+    let mut status: ffi::MPI_Status = malloc();
     let r = unsafe {
         ffi::MPI_Wait(
           req.inner(),
