@@ -19,6 +19,23 @@ impl Request {
       inner,
     }
   }
+
+  pub fn test(&mut self) -> anyhow::Result<bool> {
+    let mut status: MPI_Status = malloc();
+    let mut flag = 0;
+    let r = unsafe {
+        ffi::MPI_Test(
+          &mut self.inner,
+          &mut flag,
+          &mut status,
+        ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(flag != 0),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Wait] Unknown code: {}", r))),
+    }
+  }
+
   pub fn wait(&mut self) -> anyhow::Result<()> {
     let mut status: MPI_Status = malloc();
     let r = unsafe {
