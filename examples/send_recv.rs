@@ -9,7 +9,7 @@ fn main() -> anyhow::Result<()> {
     let mut send_buff: Vec<u32> = vec![1, 2, 3, 4, 5,];
     let mut recv_buff: Vec<f64> = vec![0.0; 3];
 
-    println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+    println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
     world.send_recv(
       &mut send_buff,
       1,
@@ -18,12 +18,12 @@ fn main() -> anyhow::Result<()> {
       1,
       0,
     )?;
-    println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+    println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
   } else {
     let mut send_buff: Vec<f64> = vec![1.0, 2.0, 3.0];
     let mut recv_buff: Vec<u32> = vec![0; 5];
 
-    println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+    println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
     world.send_recv(
       &mut send_buff,
       0,
@@ -32,7 +32,7 @@ fn main() -> anyhow::Result<()> {
       0,
       0,
     )?;
-    println!("SendBuf: {:?} / RecvBuf {:?}", send_buff, recv_buff);
+    println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
   }
   Ok(())
 }
