@@ -2,6 +2,7 @@ mod universe;
 mod communicator;
 mod mpi;
 mod request;
+mod util;
 
 // Exposed
 pub use mpi::Op;

@@ -4,31 +4,26 @@ use ffi::{
   MPI_SUCCESS,
 };
 use crate::mpi;
+use crate::util::malloc;
 use crate::request::Request;
 
-fn malloc<T>() -> T {
-  return unsafe {
-    std::mem::MaybeUninit::<T>::zeroed().assume_init()
-  };
-}
-
 pub struct Communicator {
-  inner: MPI_Comm,
+  comm: MPI_Comm,
 }
 
 impl Communicator {
   pub fn new(
-    inner: MPI_Comm,
+    comm: MPI_Comm,
   ) -> Self {
     Self {
-      inner,
+      comm,
     }
   }
 
-  pub fn size(&mut self) -> anyhow::Result<usize> {
+  pub fn size(&self) -> anyhow::Result<usize> {
     let mut size: i32 = 0;
     let r = unsafe {
-      ffi::MPI_Comm_size(self.inner, &mut size) as u32
+      ffi::MPI_Comm_size(self.comm, &mut size) as u32
     };
     match r {
       MPI_SUCCESS => Ok(size as usize),
@@ -39,7 +34,7 @@ impl Communicator {
   pub fn rank(&mut self) -> anyhow::Result<usize> {
     let mut rank: i32 = 0;
     let r = unsafe {
-      ffi::MPI_Comm_rank(self.inner, &mut rank) as u32
+      ffi::MPI_Comm_rank(self.comm, &mut rank) as u32
     };
     match r {
       MPI_SUCCESS => Ok(rank as usize),
@@ -57,7 +52,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.inner,
+        self.comm,
       ) as u32
     };
     match r {
@@ -77,7 +72,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.inner,
+        self.comm,
         &mut req,
       ) as u32
     };
@@ -98,7 +93,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.inner,
+        self.comm,
         &mut status,
       ) as u32
     };
@@ -119,7 +114,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.inner,
+        self.comm,
         &mut req,
       ) as u32
     };
@@ -150,7 +145,7 @@ impl Communicator {
         U::to_ffi(),
         recv_peer as i32,
         recv_tag as i32,
-        self.inner,
+        self.comm,
         &mut status,
       ) as u32
     };
@@ -179,7 +174,7 @@ impl Communicator {
         send_tag as i32,
         recv_peer as i32,
         recv_tag as i32,
-        self.inner,
+        self.comm,
         &mut status,
       ) as u32
     };
@@ -198,7 +193,7 @@ impl Communicator {
         buff.len() as i32,
         T::to_ffi(),
         root as i32,
-        self.inner
+        self.comm,
       ) as u32
     };
     match r {
@@ -218,6 +213,7 @@ impl Communicator {
         return Err(anyhow::Error::msg(format!("SendBuf size not match. Required: {} != Actual: {}", required, send_buff.len())));
       }
     }
+
     let r = unsafe {
       ffi::MPI_Scatter(
         send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
@@ -227,7 +223,7 @@ impl Communicator {
         recv_buff.len() as i32,
         T::to_ffi(),
         root as i32,
-        self.inner,
+        self.comm,
       ) as u32
     };
     match r {
@@ -256,7 +252,7 @@ impl Communicator {
         send_buff.len() as i32,
         T::to_ffi(),
         root as i32,
-        self.inner,
+        self.comm,
       ) as u32
     };
     match r {
@@ -275,6 +271,7 @@ impl Communicator {
       }
     }
     let count = send_buff.len();
+
     let r = unsafe {
       ffi::MPI_Reduce(
         send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
@@ -283,7 +280,7 @@ impl Communicator {
         T::to_ffi(),
         op.to_ffi(),
         root as i32,
-        self.inner,
+        self.comm,
       ) as u32
     };
     match r {
@@ -306,26 +303,12 @@ impl Communicator {
         count as i32,
         T::to_ffi(),
         op.to_ffi(),
-        self.inner,
+        self.comm,
       ) as u32
     };
     match r {
       MPI_SUCCESS => Ok(()),
       _ => Err(anyhow::Error::msg(format!("[MPI_Allreduce] Unknown code: {}", r))),
-    }
-  }
-
-  pub fn wait_request(&mut self, req: &mut Request) -> anyhow::Result<()> {
-    let mut status: ffi::MPI_Status = malloc();
-    let r = unsafe {
-        ffi::MPI_Wait(
-          req.inner(),
-          &mut status,
-        ) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(()),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Wait] Unknown code: {}", r))),
     }
   }
 }
