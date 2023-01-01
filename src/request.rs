@@ -3,16 +3,16 @@
 
 use fujitsu_mpi_sys as ffi;
 pub struct Request {
-  req: ffi::MPI_Request,
+  inner: ffi::MPI_Request,
 }
 
 impl Request {
-  pub(crate) fn new(req: ffi::MPI_Request) -> Self {
+  pub(crate) fn new(inner: ffi::MPI_Request) -> Self {
     Self {
-      req,
+      inner,
     }
   }
   pub(crate) fn inner(&mut self) -> &mut ffi::MPI_Request {
-    &mut self.req
+    &mut self.inner
   }
 }

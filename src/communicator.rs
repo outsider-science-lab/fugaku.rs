@@ -13,22 +13,22 @@ fn malloc<T>() -> T {
 }
 
 pub struct Communicator {
-  comm: MPI_Comm,
+  inner: MPI_Comm,
 }
 
 impl Communicator {
   pub fn new(
-    comm: MPI_Comm,
+    inner: MPI_Comm,
   ) -> Self {
     Self {
-      comm,
+      inner,
     }
   }
 
   pub fn size(&mut self) -> anyhow::Result<usize> {
     let mut size: i32 = 0;
     let r = unsafe {
-      ffi::MPI_Comm_size(self.comm, &mut size) as u32
+      ffi::MPI_Comm_size(self.inner, &mut size) as u32
     };
     match r {
       MPI_SUCCESS => Ok(size as usize),
@@ -39,7 +39,7 @@ impl Communicator {
   pub fn rank(&mut self) -> anyhow::Result<usize> {
     let mut rank: i32 = 0;
     let r = unsafe {
-      ffi::MPI_Comm_rank(self.comm, &mut rank) as u32
+      ffi::MPI_Comm_rank(self.inner, &mut rank) as u32
     };
     match r {
       MPI_SUCCESS => Ok(rank as usize),
@@ -57,7 +57,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.comm,
+        self.inner,
       ) as u32
     };
     match r {
@@ -77,7 +77,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.comm,
+        self.inner,
         &mut req,
       ) as u32
     };
@@ -98,7 +98,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.comm,
+        self.inner,
         &mut status,
       ) as u32
     };
@@ -119,7 +119,7 @@ impl Communicator {
         T::to_ffi(),
         peer as i32,
         tag,
-        self.comm,
+        self.inner,
         &mut req,
       ) as u32
     };
@@ -150,7 +150,7 @@ impl Communicator {
         U::to_ffi(),
         recv_peer as i32,
         recv_tag as i32,
-        self.comm,
+        self.inner,
         &mut status,
       ) as u32
     };
@@ -179,7 +179,7 @@ impl Communicator {
         send_tag as i32,
         recv_peer as i32,
         recv_tag as i32,
-        self.comm,
+        self.inner,
         &mut status,
       ) as u32
     };
@@ -198,7 +198,7 @@ impl Communicator {
         buff.len() as i32,
         T::to_ffi(),
         root as i32,
-        self.comm
+        self.inner
       ) as u32
     };
     match r {
@@ -227,7 +227,7 @@ impl Communicator {
         recv_buff.len() as i32,
         T::to_ffi(),
         root as i32,
-        self.comm,
+        self.inner,
       ) as u32
     };
     match r {
@@ -256,7 +256,7 @@ impl Communicator {
         send_buff.len() as i32,
         T::to_ffi(),
         root as i32,
-        self.comm,
+        self.inner,
       ) as u32
     };
     match r {
@@ -283,7 +283,7 @@ impl Communicator {
         T::to_ffi(),
         op.to_ffi(),
         root as i32,
-        self.comm,
+        self.inner,
       ) as u32
     };
     match r {
@@ -306,7 +306,7 @@ impl Communicator {
         count as i32,
         T::to_ffi(),
         op.to_ffi(),
-        self.comm,
+        self.inner,
       ) as u32
     };
     match r {
