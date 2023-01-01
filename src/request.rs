@@ -22,17 +22,17 @@ impl Request {
 
   pub fn test(&mut self) -> anyhow::Result<bool> {
     let mut status: MPI_Status = malloc();
-    let mut flag = 0;
+    let mut ready = 0;
     let r = unsafe {
         ffi::MPI_Test(
           &mut self.inner,
-          &mut flag,
+          &mut ready,
           &mut status,
         ) as u32
     };
     match r {
-      MPI_SUCCESS => Ok(flag != 0),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Wait] Unknown code: {}", r))),
+      MPI_SUCCESS => Ok(ready != 0),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Test] Unknown code: {}", r))),
     }
   }
 
