@@ -10,6 +10,10 @@ use ffi::{
 };
 use crate::communicator::Communicator;
 
+// https://rookiehpc.github.io/mpi/docs/mpi_thread_single/
+// https://rookiehpc.github.io/mpi/docs/mpi_thread_funneled/
+// https://rookiehpc.github.io/mpi/docs/mpi_thread_serialized/
+// https://rookiehpc.github.io/mpi/docs/mpi_thread_multiple/
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ThreadLevel {
   Single,
@@ -83,7 +87,7 @@ pub fn initialize() -> anyhow::Result<Universe> {
   })
 }
 
-pub fn initialize_thread(level: ThreadLevel) -> anyhow::Result<Universe> {
+pub fn initialize_thread(request: ThreadLevel) -> anyhow::Result<Universe> {
   if initialized()? {
     return Err(anyhow::Error::msg("MPI: Already initialized."))
   }
@@ -91,7 +95,7 @@ pub fn initialize_thread(level: ThreadLevel) -> anyhow::Result<Universe> {
     let mut provided = 0;
     // https://rookiehpc.github.io/mpi/docs/mpi_init_thread/
     let r = unsafe {
-      ffi::MPI_Init_thread(argc, argv, level.to_ffi(), &mut provided) as u32
+      ffi::MPI_Init_thread(argc, argv, request.to_ffi(), &mut provided) as u32
     };
     match r {
       MPI_SUCCESS => Ok(Universe {
