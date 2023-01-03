@@ -5,5 +5,10 @@ fn main() -> anyhow::Result<()> {
   let size = world.size()?;
   let rank = world.rank()?;
   println!("size = {}, rank = {}", size, rank);
+  println!("required = {:?}, provided = {:?}, request fulfilled = {}",
+    fujitsu_mpi::ThreadLevel::Multiple,
+    universe.level(),
+    fujitsu_mpi::ThreadLevel::Multiple <= universe.level(),
+  );
   Ok(())
 }

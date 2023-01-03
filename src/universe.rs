@@ -10,7 +10,7 @@ use ffi::{
 };
 use crate::communicator::Communicator;
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ThreadLevel {
   Single,
   Funneled,
