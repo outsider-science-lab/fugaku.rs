@@ -1,5 +1,5 @@
 // Doc:
-// - https://rookiehpc.github.io/mpi/docs/mpi_request/index.html
+// - https://rookiehpc.github.io/mpi/docs/mpi_request/
 
 use fujitsu_mpi_sys as ffi;
 use ffi::{
