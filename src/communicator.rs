@@ -45,6 +45,16 @@ impl Communicator {
     }
   }
 
+  pub fn abort(&mut self, error_code: i32) -> anyhow::Result<()> {
+    let r = unsafe {
+      ffi::MPI_Abort(self.comm, error_code) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
+    }
+  }
+
   pub fn send<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
     where T: mpi::DataType,
   {

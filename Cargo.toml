@@ -26,6 +26,9 @@ name = "hello-mpi"
 name = "hello-mpi-thread"
 
 [[example]]
+name = "abort"
+
+[[example]]
 name = "one-to-one"
 
 [[example]]
