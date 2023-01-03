@@ -9,7 +9,9 @@ pub struct Universe {
 
 }
 
-pub fn initialize() -> anyhow::Result<Universe> {
+fn with_args<R, F>(closure: F) -> R
+  where F: FnOnce(*mut i32, *mut *mut *mut u8) -> R
+{
   let args: Vec<String> = std::env::args().collect();
   let mut argc = args.len() as i32;
   let mut argv: Vec<*mut u8> = Vec::new();
@@ -17,13 +19,19 @@ pub fn initialize() -> anyhow::Result<Universe> {
     argv.push(arg.as_ptr() as *mut u8);
   }
   let mut argv_ptr = argv.as_mut_ptr();
-  let r = unsafe {
-    ffi::MPI_Init(&mut argc as *mut i32, &mut argv_ptr as *mut *mut *mut u8) as u32
-  };
-  match r {
-    MPI_SUCCESS => Ok(Universe {}),
-    _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
-  }
+  closure(&mut argc as *mut i32, &mut argv_ptr as *mut *mut *mut u8)
+}
+
+pub fn initialize() -> anyhow::Result<Universe> {
+  with_args(|argc, argv| {
+    let r = unsafe {
+      ffi::MPI_Init(argc, argv) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(Universe {}),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
+    }  
+  })
 }
 
 impl Universe {
