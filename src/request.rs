@@ -49,4 +49,21 @@ impl Request {
       _ => Err(anyhow::Error::msg(format!("[MPI_Wait] Unknown code: {}", r))),
     }
   }
+
+  pub fn test_all(requests: &[&mut Request]) -> anyhow::Result<Vec<bool>> {
+    let mut flags = vec![0; requests.len()];
+    let mut inners = requests.iter().map(|it| it.inner).collect::<Vec<_>>();
+    let r = unsafe {
+      ffi::MPI_Testall(
+        requests.len() as i32,
+        inners.as_mut_ptr(),
+        flags.as_mut_ptr(),
+        std::ptr::null_mut(),
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(flags.iter().map(|it| *it != 0).collect()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Wait] Unknown code: {}", r))),
+    }
+  }
 }
