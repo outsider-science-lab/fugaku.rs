@@ -6,6 +6,7 @@ fn main() -> anyhow::Result<()> {
   println!("size = {}, rank = {}", world.size()?, rank);
   if rank == 0 {
     let mut send_buff: [u64; 3] = [1, 2, 3];
+    std::thread::sleep(std::time::Duration::from_secs(1));
     let mut req = world.send_async(&mut send_buff, 1, 0)?;
     println!("[Send] ready = {}", req.test()?);
     req.wait()?;
@@ -14,6 +15,7 @@ fn main() -> anyhow::Result<()> {
     let mut recv_buff: [u64; 3] = [0, 0, 0];
     let mut req = world.recv_async(&mut recv_buff, 0, 0)?;
     println!("[Recv] ready = {}", req.test()?);
+    println!("[Recv] ready = {:?}", fujitsu_mpi::Request::test_all(&[&mut req])?);
     req.wait()?;
     println!("[Recv] recv_buff = {:?}", recv_buff);
   };
