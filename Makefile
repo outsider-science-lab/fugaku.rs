@@ -16,6 +16,10 @@ run: build
 	pjsub job.sh
 	pjstat
 
+.PHONY: ps
+ps: FORCE
+	pjstat
+
 .PHONY: clean
 clean: FORCE
 	rm -rf ./target/
