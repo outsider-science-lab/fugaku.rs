@@ -18,7 +18,7 @@ run: build
 
 .PHONY: ps
 ps: FORCE
-	pjstat
+	@pjstat
 
 .PHONY: clean
 clean: FORCE
