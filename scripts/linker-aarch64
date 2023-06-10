@@ -3,4 +3,4 @@
 # To debug linking, enable this line
 # echo "$@" > link-flags.debug.txt
 
-mpifccpx "$@"
+exec mpifccpx "$@"
