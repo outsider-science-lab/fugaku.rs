@@ -1,3 +1,5 @@
+use anyhow::Context;
+
 fn main() -> anyhow::Result<()> {
   let mut universe = fujitsu_mpi::initialize()?;
   println!("Initialized");

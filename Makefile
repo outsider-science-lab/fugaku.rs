@@ -6,7 +6,7 @@ all: FORCE
 	./build.sh
 
 gen: FORCE
-	./fujitsu-mpi-sys/gen.sh
+	./fmpi-sys/gen.sh
 
 .PHONY: build
 build: all;

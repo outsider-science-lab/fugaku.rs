@@ -1,5 +1,5 @@
 [package]
-name = "fujitsu-mpi"
+name = "fugaku"
 version = "0.1.0"
 edition = "2021"
 authors = ["Kaede Fujisaki <kaede@hexe.net>"]
@@ -11,13 +11,13 @@ license = "GPL-3.0-or-later"
 
 [workspace]
 members = [
-  "fujitsu-mpi-sys",
+  "mpi-sys",
   "bed",
 ]
 
 [dependencies]
 anyhow = "1"
-fujitsu-mpi-sys = { path="./fujitsu-mpi-sys" }
+mpi-sys = { path="./mpi-sys" }
 
 [[example]]
 name = "hello-mpi"

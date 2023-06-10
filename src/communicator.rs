@@ -1,7 +1,7 @@
 // Doc:
 // - https://rookiehpc.github.io/mpi/docs/mpi_comm/
 
-use fujitsu_mpi_sys as ffi;
+use mpi_sys as ffi;
 use ffi::{
   MPI_Comm,
   MPI_SUCCESS,
