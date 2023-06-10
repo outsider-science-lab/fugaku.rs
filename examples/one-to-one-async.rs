@@ -1,5 +1,5 @@
 fn main() -> anyhow::Result<()> {
-  let mut universe = fujitsu_mpi::initialize()?;
+  let mut universe = mpi::initialize()?;
   println!("Initialized");
   let mut world = universe.world();
   let rank = world.rank()?;
@@ -15,7 +15,7 @@ fn main() -> anyhow::Result<()> {
     let mut recv_buff: [u64; 3] = [0, 0, 0];
     let mut req = world.recv_async(&mut recv_buff, 0, 0)?;
     println!("[Recv] ready = {}", req.test()?);
-    println!("[Recv] ready = {:?}", fujitsu_mpi::Request::test_all(&[&mut req])?);
+    println!("[Recv] ready = {:?}", mpi::Request::test_all(&[&mut req])?);
     req.wait()?;
     println!("[Recv] recv_buff = {:?}", recv_buff);
   };

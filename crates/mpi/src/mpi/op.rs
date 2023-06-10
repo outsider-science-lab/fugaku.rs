@@ -1,4 +1,4 @@
-use fujitsu_mpi_sys as ffi;
+use mpi_sys as ffi;
 
 pub enum Op {
   Null,

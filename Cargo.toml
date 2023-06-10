@@ -11,13 +11,15 @@ license = "GPL-3.0-or-later"
 
 [workspace]
 members = [
-  "mpi-sys",
+  "crates/mpi-sys",
+  "crates/mpi",
   "bed",
 ]
 
 [dependencies]
 anyhow = "1"
-mpi-sys = { path="./mpi-sys" }
+mpi-sys = { path="crates/mpi-sys" }
+mpi = { path="crates/mpi" }
 
 [[example]]
 name = "hello-mpi"

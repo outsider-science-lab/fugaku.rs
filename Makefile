@@ -6,7 +6,7 @@ all: FORCE
 	./build.sh
 
 gen: FORCE
-	./fmpi-sys/gen.sh
+	./crates/mpi-sys/gen.sh
 
 .PHONY: build
 build: all;

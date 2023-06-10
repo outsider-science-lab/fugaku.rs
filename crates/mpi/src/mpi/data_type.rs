@@ -1,4 +1,4 @@
-use fujitsu_mpi_sys as ffi;
+use mpi_sys as ffi;
 use ffi::{
   MPI_Datatype,
   ompi_predefined_datatype_t,

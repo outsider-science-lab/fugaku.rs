@@ -1,5 +1,5 @@
 fn main() -> anyhow::Result<()> {
-  let mut universe = fujitsu_mpi::initialize()?;
+  let mut universe = mpi::initialize()?;
   println!("Initialized");
   let mut world = universe.world();
   let size = world.size()?;
@@ -15,7 +15,7 @@ fn main() -> anyhow::Result<()> {
   world.all_reduce(
     &mut send_buff,
     &mut recv_buff,
-    fujitsu_mpi::Op::Sum,
+    mpi::Op::Sum,
   )?;
   println!("send_buff = {:?}, recv_buff = {:?}", send_buff, recv_buff);
   Ok(())

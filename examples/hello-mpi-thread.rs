@@ -1,6 +1,6 @@
 fn main() -> anyhow::Result<()> {
-  let request = fujitsu_mpi::ThreadLevel::Multiple;
-  let mut universe = fujitsu_mpi::initialize_thread(request)?;
+  let request = mpi::ThreadLevel::Multiple;
+  let mut universe = mpi::initialize_thread(request)?;
   println!("Initialized");
   let mut world = universe.world();
   let size = world.size()?;
