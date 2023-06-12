@@ -1,0 +1,5 @@
+{
+  "rust-analyzer.linkedProjects": [
+    "./crates/mpi-async/Cargo.toml"
+  ]
+}

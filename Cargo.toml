@@ -11,14 +11,16 @@ license = "GPL-3.0-or-later"
 
 [workspace]
 members = [
-  "crates/mpi-sys",
   "crates/mpi",
+  "crates/mpi-async",
+  "crates/mpi-sys",
   "bed",
 ]
 
 [dependencies]
 anyhow = "1"
 mpi-sys = { path="crates/mpi-sys" }
+mpi-async = { path="crates/mpi-async" }
 mpi = { path="crates/mpi" }
 
 [[example]]
