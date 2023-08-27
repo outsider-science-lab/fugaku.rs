@@ -23,4 +23,4 @@ ps: FORCE
 .PHONY: clean
 clean: FORCE
 	rm -rf ./target/
-	rm -rf job.sh.*.err job.sh.*.out ./output.*
+	rm -rf job.sh.*.err job.sh.*.out ./output.* ./*.stats
