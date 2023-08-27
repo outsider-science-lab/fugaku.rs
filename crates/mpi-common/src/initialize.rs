@@ -1,5 +1,6 @@
 use mpi_sys as ffi;
 use crate::thread_level::ThreadLevel;
+use ffi::MPI_SUCCESS;
 
 fn with_args<R, F>(closure: F) -> R
   where F: FnOnce(*mut i32, *mut *mut *mut u8) -> R
@@ -20,7 +21,7 @@ pub fn initialized() -> anyhow::Result<bool> {
     ffi::MPI_Initialized(&mut ready) as u32
   };
   match r {
-    ffi::MPI_SUCCESS => Ok(ready != 0),
+    MPI_SUCCESS => Ok(ready != 0),
     _ => Err(anyhow::Error::msg(format!("[MPI_Initialized] Unknown code: {}", r))),
   }  
 }
@@ -34,7 +35,7 @@ pub fn initialize() -> anyhow::Result<ThreadLevel> {
       ffi::MPI_Init(argc, argv) as u32
     };
     match r {
-      ffi::MPI_SUCCESS => Ok(ThreadLevel::Single),
+      MPI_SUCCESS => Ok(ThreadLevel::Single),
       _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
     }  
   })
@@ -51,7 +52,7 @@ pub fn initialize_thread(request: ThreadLevel) -> anyhow::Result<ThreadLevel> {
       ffi::MPI_Init_thread(argc, argv, request.to_ffi(), &mut provided) as u32
     };
     match r {
-      ffi::MPI_SUCCESS => Ok(ThreadLevel::from_ffi(provided)?),
+      MPI_SUCCESS => Ok(ThreadLevel::from_ffi(provided)?),
       _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
     }  
   })

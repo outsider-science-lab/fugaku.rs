@@ -12,16 +12,14 @@ pub struct Universe {
 }
 
 pub fn initialize() -> anyhow::Result<Universe> {
-  let level = mpi_common::initialize()?;
   Ok(Universe {
-    level,
+    level: mpi_common::initialize()?,
   })
 }
 
 pub fn initialize_thread(level: ThreadLevel) -> anyhow::Result<Universe> {
-  let actual_level = mpi_common::initialize_thread(level)?;
   Ok(Universe {
-    level: actual_level,
+    level: mpi_common::initialize_thread(level)?,
   })
 }
 
