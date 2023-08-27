@@ -1,5 +1,5 @@
 [package]
-name = "mpi-async"
+name = "mpi-common"
 version = "0.1.0"
 edition = "2021"
 authors = ["Kaede Fujisaki <kaede@hexe.net>"]
@@ -10,5 +10,6 @@ license = "GPL-3.0-or-later"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1"
+anyhow = { workspace = true }
 mpi-sys = { path="../mpi-sys" }
+futures = "0.3.28"
