@@ -5,6 +5,7 @@ use ffi::{
 };
 use crate::communicator::Communicator;
 use mpi_common::ThreadLevel;
+pub use mpi_common::initialized;
 
 pub struct Universe {
   level: ThreadLevel,
