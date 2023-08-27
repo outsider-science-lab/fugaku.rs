@@ -8,7 +8,6 @@ use ffi::{
 };
 use crate::mpi;
 use crate::util::malloc;
-use crate::request::Request;
 
 pub struct Communicator {
   comm: MPI_Comm,
@@ -74,27 +73,6 @@ impl Communicator {
     }
   }
 
-  pub fn send_async<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<Request>
-    where T: mpi::DataType,
-  {
-    let mut req: ffi::MPI_Request = malloc();
-    let r = unsafe {
-      ffi::MPI_Isend(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        buff.len() as i32,
-        T::to_ffi(),
-        peer as i32,
-        tag,
-        self.comm,
-        &mut req,
-      ) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(Request::new(req)),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", r))),
-    }
-  }
-
   pub fn recv<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
     where T: mpi::DataType,
   {
@@ -113,27 +91,6 @@ impl Communicator {
     match r {
       MPI_SUCCESS => Ok(()),
       _ => Err(anyhow::Error::msg(format!("[MPI_Recv] Unknown code: {}", r))),
-    }
-  }
-
-  pub fn recv_async<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<Request>
-    where T: mpi::DataType,
-  {
-    let mut req: ffi::MPI_Request = malloc();
-    let r = unsafe {
-      ffi::MPI_Irecv(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        buff.len() as i32,
-        T::to_ffi(),
-        peer as i32,
-        tag,
-        self.comm,
-        &mut req,
-      ) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(Request::new(req)),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", r))),
     }
   }
 
