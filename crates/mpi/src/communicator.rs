@@ -6,8 +6,9 @@ use ffi::{
   MPI_Comm,
   MPI_SUCCESS,
 };
-use crate::mpi;
-use crate::util::malloc;
+use mpi_common::DataType;
+use mpi_common::Op;
+use mpi_common::malloc;
 
 pub struct Communicator {
   comm: MPI_Comm,
@@ -55,7 +56,7 @@ impl Communicator {
   }
 
   pub fn send<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
-    where T: mpi::DataType,
+    where T: DataType,
   {
     let r = unsafe {
       ffi::MPI_Send(
@@ -74,7 +75,7 @@ impl Communicator {
   }
 
   pub fn recv<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
-    where T: mpi::DataType,
+    where T: DataType,
   {
     let mut status: ffi::MPI_Status = malloc();
     let r = unsafe {
@@ -99,8 +100,8 @@ impl Communicator {
     recv_buff: &mut [U], recv_peer: usize, recv_tag: usize,
   ) -> anyhow::Result<()>
     where
-      T: mpi::DataType,
-      U: mpi::DataType,
+      T: DataType,
+      U: DataType,
   {
     let mut status: ffi::MPI_Status = malloc();
     let r = unsafe {
@@ -131,7 +132,7 @@ impl Communicator {
     recv_peer: usize, recv_tag: usize,
   ) -> anyhow::Result<()>
     where
-      T: mpi::DataType,
+      T: DataType,
   {
     let mut status: ffi::MPI_Status = malloc();
 
@@ -155,7 +156,7 @@ impl Communicator {
   }
 
   pub fn broadcast<T>(&mut self, buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType,
+    where T: DataType,
   {
     let r = unsafe {
       ffi::MPI_Bcast(
@@ -173,7 +174,7 @@ impl Communicator {
   }
 
   pub fn scatter<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType,
+    where T: DataType,
   {
     let size = self.size()?;
     let rank = self.rank()?;
@@ -203,7 +204,7 @@ impl Communicator {
   }
 
   pub fn gather<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType,
+    where T: DataType,
   {
     let size = self.size()?;
     let rank = self.rank()?;
@@ -231,8 +232,8 @@ impl Communicator {
     }
   }
 
-  pub fn reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op, root: usize) -> anyhow::Result<()>
-    where T: mpi::DataType,
+  pub fn reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: Op, root: usize) -> anyhow::Result<()>
+    where T: DataType,
   {
     let rank = self.rank()?;
     if rank == root {
@@ -259,8 +260,8 @@ impl Communicator {
     }
   }
 
-  pub fn all_reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: mpi::Op) -> anyhow::Result<()>
-    where T: mpi::DataType,
+  pub fn all_reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: Op) -> anyhow::Result<()>
+    where T: DataType,
   {
     if send_buff.len() != recv_buff.len() {
       return Err(anyhow::Error::msg(format!("SendBuf and RecvBuf must have the same length. SendBuf: {} != RecvBuf: {}", send_buff.len(), recv_buff.len())));

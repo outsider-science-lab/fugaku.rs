@@ -6,7 +6,7 @@ pub enum Op {
 }
 
 impl Op {
-  pub(crate) fn to_ffi(&self) -> ffi::MPI_Op {
+  pub fn to_ffi(&self) -> ffi::MPI_Op {
     let op = unsafe {
       match self {
         &Self::Null => &mut ffi::ompi_mpi_op_null,

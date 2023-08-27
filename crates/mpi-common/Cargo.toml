@@ -1,5 +1,5 @@
 [package]
-name = "mpi"
+name = "mpi-common"
 version = "0.1.0"
 edition = "2021"
 authors = ["Kaede Fujisaki <kaede@hexe.net>"]
@@ -12,4 +12,3 @@ license = "GPL-3.0-or-later"
 [dependencies]
 anyhow = { workspace = true }
 mpi-sys = { path="../mpi-sys" }
-mpi-common = { path="../mpi-common" }
