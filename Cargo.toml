@@ -11,9 +11,10 @@ license = "GPL-3.0-or-later"
 
 [workspace]
 members = [
+  "crates/mpi-common",
+  "crates/mpi-sys",
   "crates/mpi",
   "crates/mpi-async",
-  "crates/mpi-sys",
   "bed",
 ]
 
