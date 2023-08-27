@@ -1,108 +1,26 @@
-use std::ffi::{
-  c_int,
-  c_uint,
-};
-
 use mpi_sys as ffi;
 use ffi::{
   MPI_Comm,
   MPI_SUCCESS,
 };
 use crate::communicator::Communicator;
-
-// https://rookiehpc.github.io/mpi/docs/mpi_thread_single/
-// https://rookiehpc.github.io/mpi/docs/mpi_thread_funneled/
-// https://rookiehpc.github.io/mpi/docs/mpi_thread_serialized/
-// https://rookiehpc.github.io/mpi/docs/mpi_thread_multiple/
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum ThreadLevel {
-  Single,
-  Funneled,
-  Serialized,
-  Multiple,
-}
-
-impl ThreadLevel {
-  fn to_ffi(&self) -> c_int {
-    match self {
-      &Self::Single => ffi::MPI_THREAD_SINGLE as c_int,
-      &Self::Funneled => ffi::MPI_THREAD_FUNNELED as c_int,
-      &Self::Serialized => ffi::MPI_THREAD_SERIALIZED as c_int,
-      &Self::Multiple => ffi::MPI_THREAD_MULTIPLE as c_int,
-    }
-  }
-  fn from_ffi(level: c_int) -> anyhow::Result<Self> {
-    match level as c_uint {
-      ffi::MPI_THREAD_SINGLE => Ok(Self::Single),
-      ffi::MPI_THREAD_FUNNELED => Ok(Self::Funneled),
-      ffi::MPI_THREAD_SERIALIZED => Ok(Self::Serialized),
-      ffi::MPI_THREAD_MULTIPLE => Ok(Self::Multiple),
-      level => Err(anyhow::Error::msg(format!("Unknwon thread level: {}", level)))
-    }
-  }
-}
+use mpi_common::ThreadLevel;
 
 pub struct Universe {
   level: ThreadLevel,
 }
 
-fn with_args<R, F>(closure: F) -> R
-  where F: FnOnce(*mut i32, *mut *mut *mut u8) -> R
-{
-  let args: Vec<String> = std::env::args().collect();
-  let mut argc = args.len() as i32;
-  let mut argv: Vec<*mut u8> = Vec::new();
-  for arg in &args {
-    argv.push(arg.as_ptr() as *mut u8);
-  }
-  let mut argv_ptr = argv.as_mut_ptr();
-  closure(&mut argc as *mut i32, &mut argv_ptr as *mut *mut *mut u8)
-}
-
-pub fn initialized() -> anyhow::Result<bool> {
-  let mut ready = 0;
-  let r = unsafe {
-    ffi::MPI_Initialized(&mut ready) as u32
-  };
-  match r {
-    MPI_SUCCESS => Ok(ready != 0),
-    _ => Err(anyhow::Error::msg(format!("[MPI_Initialized] Unknown code: {}", r))),
-  }  
-}
-
 pub fn initialize() -> anyhow::Result<Universe> {
-  if initialized()? {
-    return Err(anyhow::Error::msg("MPI: Already initialized."))
-  }
-  with_args(|argc, argv| {
-    let r = unsafe {
-      ffi::MPI_Init(argc, argv) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(Universe {
-        level: ThreadLevel::Single,
-      }),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
-    }  
+  let level = mpi_common::initialize()?;
+  Ok(Universe {
+    level,
   })
 }
 
-pub fn initialize_thread(request: ThreadLevel) -> anyhow::Result<Universe> {
-  if initialized()? {
-    return Err(anyhow::Error::msg("MPI: Already initialized."))
-  }
-  with_args(|argc, argv| {
-    let mut provided = 0;
-    // https://rookiehpc.github.io/mpi/docs/mpi_init_thread/
-    let r = unsafe {
-      ffi::MPI_Init_thread(argc, argv, request.to_ffi(), &mut provided) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(Universe {
-        level: ThreadLevel::from_ffi(provided)?,
-      }),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
-    }  
+pub fn initialize_thread(level: ThreadLevel) -> anyhow::Result<Universe> {
+  let actual_level = mpi_common::initialize_thread(level)?;
+  Ok(Universe {
+    level: actual_level,
   })
 }
 
