@@ -1,16 +1,10 @@
-//
+mod mpi;
+mod universe;
+mod communicator;
+mod request;
 
-pub fn add(left: usize, right: usize) -> usize {
-  left + right
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn it_works() {
-    let result = add(2, 2);
-    assert_eq!(result, 4);
-  }
-}
+pub use universe::Universe;
+pub use universe::initialize;
+pub use universe::initialized;
+pub use universe::initialize_thread;
+pub use communicator::Communicator;

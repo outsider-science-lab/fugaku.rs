@@ -1,3 +1,4 @@
+pub mod communicator;
 mod initialize;
 mod data_type;
 mod op;

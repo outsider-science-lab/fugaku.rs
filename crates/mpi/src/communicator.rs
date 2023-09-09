@@ -24,37 +24,17 @@ impl Communicator {
   }
 
   pub fn size(&self) -> anyhow::Result<usize> {
-    let mut size: i32 = 0;
-    let r = unsafe {
-      ffi::MPI_Comm_size(self.comm, &mut size) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(size as usize),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
-    }
+    mpi_common::communicator::size(self.comm)
   }
 
-  pub fn rank(&mut self) -> anyhow::Result<usize> {
-    let mut rank: i32 = 0;
-    let r = unsafe {
-      ffi::MPI_Comm_rank(self.comm, &mut rank) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(rank as usize),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
-    }
+  pub fn rank(&self) -> anyhow::Result<usize> {
+    mpi_common::communicator::rank(self.comm)
   }
 
-  pub fn abort(&mut self, error_code: i32) -> anyhow::Result<()> {
-    let r = unsafe {
-      ffi::MPI_Abort(self.comm, error_code) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(()),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Comm_size] Unknown code: {}", r))),
-    }
+  pub fn abort(&self, error_code: i32) -> anyhow::Result<()> {
+    mpi_common::communicator::abort(self.comm, error_code)
   }
-
+  
   pub fn send<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
     where T: DataType,
   {
