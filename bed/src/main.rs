@@ -19,5 +19,5 @@ fn main() -> anyhow::Result<()> {
       println!("[Recv] recv_buff = {:?}", recv_buff);
     };
     Ok(())
-    })
+  })
 }
