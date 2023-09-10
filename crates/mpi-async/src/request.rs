@@ -18,7 +18,7 @@ pub struct Request {
 impl Future for Request {
     type Output = anyhow::Result<()>;
 
-    fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
+    fn poll(mut self: std::pin::Pin<&mut Self>, _cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
       use std::task::Poll;
       let t = self.test();
       if t.is_ok() {
@@ -53,20 +53,6 @@ impl Request {
     match r {
       MPI_SUCCESS => Ok(ready != 0),
       _ => Err(anyhow::Error::msg(format!("[MPI_Test] Unknown code: {}", r))),
-    }
-  }
-
-  fn wait(&mut self) -> anyhow::Result<()> {
-    let mut status: MPI_Status = malloc();
-    let r = unsafe {
-        ffi::MPI_Wait(
-          &mut self.inner,
-          &mut status,
-        ) as u32
-    };
-    match r {
-      MPI_SUCCESS => Ok(()),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Wait] Unknown code: {}", r))),
     }
   }
 }

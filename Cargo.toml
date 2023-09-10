@@ -19,11 +19,12 @@ members = [
 ]
 
 [dependencies]
+anyhow = "1"
 mpi-sys = { path="crates/mpi-sys" }
 mpi-async = { path="crates/mpi-async" }
 mpi = { path="crates/mpi" }
 
-[workspace.dependencies]  
+[workspace.dependencies]
 anyhow = "1"
 
 [[example]]
