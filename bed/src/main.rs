@@ -10,13 +10,15 @@ fn main() -> anyhow::Result<()> {
     println!("size = {}, rank = {}", world.size()?, rank);
     if rank == 0 {
       let mut send_buff: [u64; 3] = [1, 2, 3];
+      println!("[Send/Before] send_buff = {:?}", send_buff);
       std::thread::sleep(std::time::Duration::from_secs(1));
       world.send(&mut send_buff, 1, 0)?.await?;
-      println!("[Send] send_buff = {:?}", send_buff);
+      println!("[Send/After] send_buff = {:?}", send_buff);
     } else {
       let mut recv_buff: [u64; 3] = [0, 0, 0];
+      println!("[Recv/Before] recv_buff = {:?}", recv_buff);
       world.recv(&mut recv_buff, 0, 0)?.await?;
-      println!("[Recv] recv_buff = {:?}", recv_buff);
+      println!("[Recv/After] recv_buff = {:?}", recv_buff);
     };
     Ok(())
   })
