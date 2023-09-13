@@ -26,6 +26,7 @@ mpi = { path="crates/mpi" }
 
 [workspace.dependencies]
 anyhow = "1"
+futures = "0.3.28"
 
 [[example]]
 name = "hello-mpi"

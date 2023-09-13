@@ -13,4 +13,4 @@ license = "GPL-3.0-or-later"
 anyhow = { workspace = true }
 mpi-common = { path = "../mpi-common"}
 mpi-sys = { path="../mpi-sys" }
-futures = "0.3.28"
+futures = { workspace = true }

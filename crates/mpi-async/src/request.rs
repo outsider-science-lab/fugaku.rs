@@ -23,11 +23,14 @@ impl Future for Request {
       let t = self.test();
       if t.is_ok() {
         if t.unwrap() {
+          println!("OK!");
           Poll::Ready(Ok(()))
         } else {
+          println!("FALSE");
           Poll::Pending
         }
       } else {
+        println!("ERR");
         Poll::Ready(Err(t.unwrap_err()))
       }
     }
