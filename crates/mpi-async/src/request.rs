@@ -12,7 +12,7 @@ use ffi::{
 use futures::Future;
 
 pub struct Request {
-  inner: MPI_Request,
+  req: MPI_Request,
 }
 
 impl Future for Request {
@@ -34,9 +34,9 @@ impl Future for Request {
 }
 
 impl Request {
-  pub(crate) fn new(inner: MPI_Request) -> Self {
+  pub(crate) fn new(req: MPI_Request) -> Self {
     Self {
-      inner,
+      req,
     }
   }
 
@@ -45,7 +45,7 @@ impl Request {
     let mut ready = 0;
     let r = unsafe {
         ffi::MPI_Test(
-          &mut self.inner,
+          &mut self.req,
           &mut ready,
           &mut status,
         ) as u32
