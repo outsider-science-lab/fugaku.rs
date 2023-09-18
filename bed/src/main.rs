@@ -11,7 +11,7 @@ fn main() -> anyhow::Result<()> {
     if rank == 0 {
       let mut send_buff: [u64; 3] = [1, 2, 3];
       println!("[Send/Before] send_buff = {:?}", send_buff);
-      std::thread::sleep(std::time::Duration::from_secs(1));
+      tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
       world.send(&mut send_buff, 1, 0)?.await?;
       println!("[Send/After] send_buff = {:?}", send_buff);
     } else {
