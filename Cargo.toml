@@ -19,10 +19,11 @@ members = [
 ]
 
 [dependencies]
-anyhow = "1"
 mpi-sys = { path="crates/mpi-sys" }
 mpi-async = { path="crates/mpi-async" }
 mpi = { path="crates/mpi" }
+anyhow = "1"
+tokio = { version = "1", features = ["full"] }
 
 [workspace.dependencies]
 anyhow = "1"

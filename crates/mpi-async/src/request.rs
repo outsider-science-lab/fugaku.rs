@@ -18,7 +18,7 @@ pub struct Request {
 impl Future for Request {
     type Output = anyhow::Result<()>;
 
-    fn poll(mut self: std::pin::Pin<&mut Self>, _cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
+    fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
       use std::task::Poll;
       let t = self.test();
       if t.is_ok() {
@@ -27,6 +27,7 @@ impl Future for Request {
           Poll::Ready(Ok(()))
         } else {
           println!("FALSE");
+          cx.waker().wake_by_ref();
           Poll::Pending
         }
       } else {
