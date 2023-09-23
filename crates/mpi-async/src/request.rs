@@ -23,15 +23,13 @@ impl Future for Request {
       let t = self.test();
       if t.is_ok() {
         if t.unwrap() {
-          println!("OK!");
           Poll::Ready(Ok(()))
         } else {
-          println!("FALSE");
+          // FIXME(ledyba-z): Better way to wake.
           cx.waker().wake_by_ref();
           Poll::Pending
         }
       } else {
-        println!("ERR");
         Poll::Ready(Err(t.unwrap_err()))
       }
     }
