@@ -2,7 +2,8 @@
 
 ## Official
 
-- [高性能・高密度実装・低消費電力を実現するスーパーコンピュータ「富岳」のCPU A64FX : 富士通](https://www.fujitsu.com/jp/about/resources/publications/technicalreview/2020-03/article03.html)
+- [特集：スーパーコンピュータ「富岳」 : 富士通](https://www.fujitsu.com/jp/about/resources/publications/technicalreview/2020-03/)
+  - [高性能・高密度実装・低消費電力を実現するスーパーコンピュータ「富岳」のCPU A64FX : 富士通](https://www.fujitsu.com/jp/about/resources/publications/technicalreview/2020-03/article03.html)
 - [MPI Documents](https://www.mpi-forum.org/docs/)
 
 ## Others
