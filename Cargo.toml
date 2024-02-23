@@ -3,7 +3,7 @@ name = "fugaku"
 version = "0.1.0"
 edition = "2021"
 authors = ["Kaede Fujisaki <kaede@hexe.net>"]
-description = "Fujitsu MPI library for rust."
+description = "Rust lib. collection for Fugaku Supercomputer."
 readme = "README.md"
 license = "GPL-3.0-or-later"
 
