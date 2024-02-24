@@ -10,7 +10,7 @@ spack load /cysddka || false
 
 set -eux
 
-COMPILER_DIR="$(cd "$(dirname "$(which mpifccpx)")" && cd .. && pwd)"
+COMPILER_DIR="$(realpath $(cd "$(dirname "$(which mpifccpx)")" && cd .. && pwd))"
 
 rm -f src/ffi.rs
 echo "#![allow(warnings)]" > src/ffi.rs
