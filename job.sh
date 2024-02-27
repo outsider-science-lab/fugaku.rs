@@ -3,7 +3,7 @@
 #PJM --mpi "shape=2"
 #PJM -L "rscgrp=small"
 #PJM -L "elapse=10:00"
-#PJM -g hp220271
+#PJM -g hp230405
 #PJM -s
 #PJM -x PJM_LLIO_GFSCACHE=/vol0004
 
