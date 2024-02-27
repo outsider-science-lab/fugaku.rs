@@ -16,7 +16,7 @@
 # See https://www.fugaku.r-ccs.riken.jp/doc_root/en/user_guides/use_latest/LyeredStorageAndLLIO/TheSecondLayerStrage.html#common-file-distribution-function-llio-transfer
 #/usr/bin/llio_transfer <path_to_file>
 
-source /vol0004/apps/oss/llvm-v14.0.1/init.sh
+source /vol0004/apps/oss/llvm-v15.0.3/init.sh
 
 llio_transfer ./target/aarch64-unknown-linux-gnu/release/bed
 mpiexec ./target/aarch64-unknown-linux-gnu/release/bed
