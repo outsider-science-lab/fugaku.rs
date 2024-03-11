@@ -11,6 +11,7 @@ license = "GPL-3.0-or-later"
 
 [dependencies]
 anyhow = { workspace = true }
+futures = { workspace = true }
+log = { workspace = true }
 mpi-common = { path = "../mpi-common"}
 mpi-sys = { path="../mpi-sys" }
-futures = { workspace = true }

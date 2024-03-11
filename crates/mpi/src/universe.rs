@@ -1,3 +1,4 @@
+use log::error;
 use mpi_sys as ffi;
 use ffi::{
   MPI_Comm,
@@ -41,6 +42,7 @@ impl Drop for Universe {
     };
     if r != MPI_SUCCESS {
       // TODO: Error handling?
+      error!("Failed to execute MPI_Finalize, code = {}", r);
     }
   }
 }

@@ -24,10 +24,12 @@ mpi-async = { path="crates/mpi-async" }
 mpi = { path="crates/mpi" }
 anyhow = "1.0.80"
 tokio = { version = "1.36.0", features = ["full"] }
+log = "0.4.21"
 
 [workspace.dependencies]
 anyhow = "1.0.80"
 futures = "0.3.30"
+log = "0.4.21"
 
 [[example]]
 name = "hello-mpi"
