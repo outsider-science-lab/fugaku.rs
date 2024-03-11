@@ -41,7 +41,6 @@ impl Drop for Universe {
       ffi::MPI_Finalize() as u32
     };
     if r != MPI_SUCCESS {
-      // TODO: Error handling?
       error!("Failed to execute MPI_Finalize, code = {}", r);
     }
   }
