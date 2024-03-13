@@ -48,11 +48,12 @@ impl Request {
     let mut status: MPI_Status = malloc();
     let mut ready = 0;
     let r = unsafe {
-        ffi::MPI_Test(
-          &mut self.req,
-          &mut ready,
-          &mut status,
-        ) as u32
+      // https://www.open-mpi.org/doc/v4.1/man3/MPI_Test.3.php
+      ffi::MPI_Test(
+        &mut self.req,
+        &mut ready,
+        &mut status,
+      ) as u32
     };
     match r {
       MPI_SUCCESS => Ok(ready != 0),
