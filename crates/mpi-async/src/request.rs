@@ -25,7 +25,7 @@ impl Future for Request {
           if cond {
             Poll::Ready(Ok(()))
           } else {
-            // FIXME(ledyba-z): Better way to wake.
+            // FIXME(ledyba): Better way to wake.
             cx.waker().wake_by_ref();
             Poll::Pending
           }  
