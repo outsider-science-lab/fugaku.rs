@@ -9,6 +9,7 @@
 ## Others
 
 - [Open MPI v5.0.x — Open MPI 5.0.x documentation](https://docs.open-mpi.org/en/v5.0.x/)
+  - [17.2. MPI API manual pages (section 3) — Open MPI main documentation](https://docs.open-mpi.org/en/main/man-openmpi/man3/index.html)
 - [一週間でなれる！スパコンプログラマ](https://kaityo256.github.io/sevendayshpc/index.html)
 - [RookieHPC](https://rookiehpc.github.io/)
   - [MPI Documentation](https://rookiehpc.github.io/mpi/docs/)

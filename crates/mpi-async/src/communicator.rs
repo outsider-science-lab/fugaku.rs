@@ -35,7 +35,7 @@ impl Communicator {
   }
 
   pub fn send<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<impl Future<Output=anyhow::Result<()>>>
-  where T: DataType,
+    where T: DataType,
   {
     let mut req: MPI_Request = malloc();
     let r = unsafe {
@@ -56,7 +56,7 @@ impl Communicator {
   }
 
   pub fn recv<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<impl Future<Output=anyhow::Result<()>>>
-  where T: DataType,
+    where T: DataType,
   {
     let mut req: MPI_Request = malloc();
     let r = unsafe {
