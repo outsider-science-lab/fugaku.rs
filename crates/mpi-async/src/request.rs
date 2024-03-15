@@ -21,15 +21,15 @@ impl Future for Request {
     fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
       use std::task::Poll;
       match self.test() {
-        Ok(cond) => {
-          if cond {
+        Ok(ready) => {
+          if ready {
             Poll::Ready(Ok(()))
           } else {
             // FIXME(ledyba): Better way to wake.
             cx.waker().wake_by_ref();
             Poll::Pending
           }  
-        },
+        }
         Err(err) => {
           Poll::Ready(Err(err))
         },
