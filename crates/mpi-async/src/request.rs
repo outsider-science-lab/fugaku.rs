@@ -16,25 +16,25 @@ pub struct Request {
 }
 
 impl Future for Request {
-    type Output = anyhow::Result<()>;
+  type Output = anyhow::Result<()>;
 
-    fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
-      use std::task::Poll;
-      match self.test() {
-        Ok(ready) => {
-          if ready {
-            Poll::Ready(Ok(()))
-          } else {
-            // FIXME(ledyba): Better way to wake.
-            cx.waker().wake_by_ref();
-            Poll::Pending
-          }  
+  fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
+    use std::task::Poll;
+    match self.test() {
+      Ok(ready) => {
+        if ready {
+          Poll::Ready(Ok(()))
+        } else {
+          // FIXME(ledyba): Better way to wake.
+          cx.waker().wake_by_ref();
+          Poll::Pending
         }
-        Err(err) => {
-          Poll::Ready(Err(err))
-        },
       }
+      Err(err) => {
+        Poll::Ready(Err(err))
+      },
     }
+  }
 }
 
 impl Request {
