@@ -11,19 +11,20 @@ use ffi::{
 };
 use futures::Future;
 
-pub struct Request {
+pub struct Request<'v, T: ?Sized> {
+  mem: &'v T,
   req: MPI_Request,
 }
 
-impl Future for Request {
-  type Output = anyhow::Result<()>;
+impl <'v, T: ?Sized> Future for Request<'v, T> {
+  type Output = anyhow::Result<&'v T>;
 
   fn poll(mut self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output> {
     use std::task::Poll;
     match self.test() {
       Ok(ready) => {
         if ready {
-          Poll::Ready(Ok(()))
+          Poll::Ready(Ok(self.mem))
         } else {
           // FIXME(ledyba): Better way to wake.
           cx.waker().wake_by_ref();
@@ -37,9 +38,10 @@ impl Future for Request {
   }
 }
 
-impl Request {
-  pub(crate) fn new(req: MPI_Request) -> Self {
-    Self {
+impl <'v, T: ?Sized> Request<'v, T> {
+  pub(crate) fn new<V: ?Sized>(mem: &V, req: MPI_Request) -> Request<V> {
+    Request {
+      mem,
       req,
     }
   }

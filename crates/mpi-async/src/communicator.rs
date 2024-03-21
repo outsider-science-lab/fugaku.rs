@@ -1,4 +1,3 @@
-use futures::Future;
 use mpi_sys as ffi;
 use ffi::{
   MPI_Comm,
@@ -34,13 +33,13 @@ impl Communicator {
     mpi_common::communicator::abort(self.comm, error_code)
   }
 
-  pub fn send<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<impl Future<Output=anyhow::Result<()>>>
+  pub fn send<'v, T>(&mut self, buff: &'v [T], peer: usize, tag: i32) -> anyhow::Result<Request<'v, [T]>>
     where T: DataType,
   {
     let mut req: MPI_Request = malloc();
     let r = unsafe {
       ffi::MPI_Isend(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        buff.as_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
         T::to_ffi(),
         peer as i32,
@@ -50,12 +49,12 @@ impl Communicator {
       ) as u32
     };
     match r {
-      MPI_SUCCESS => Ok(Request::new(req)),
+      MPI_SUCCESS => Ok(Request::<'v, [T]>::new(buff, req)),
       _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", r))),
     }
   }
 
-  pub fn recv<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<impl Future<Output=anyhow::Result<()>>>
+  pub fn recv<'v, T>(&mut self, buff: &'v mut [T], peer: usize, tag: i32) -> anyhow::Result<Request<'v, [T]>>
     where T: DataType,
   {
     let mut req: MPI_Request = malloc();
@@ -71,7 +70,7 @@ impl Communicator {
       ) as u32
     };
     match r {
-      MPI_SUCCESS => Ok(Request::new(req)),
+      MPI_SUCCESS => Ok(Request::<'v, [T]>::new(buff, req)),
       _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", r))),
     }
   }

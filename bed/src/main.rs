@@ -17,8 +17,8 @@ fn main() -> anyhow::Result<()> {
     } else {
       let mut recv_buff: [u64; 3] = [0, 0, 0];
       println!("[Recv/Before] recv_buff = {:?}", recv_buff);
-      world.recv(&mut recv_buff, 0, 0)?.await?;
-      println!("[Recv/After] recv_buff = {:?}", recv_buff);
+      let mem = world.recv(&mut recv_buff, 0, 0)?.await?;
+      println!("[Recv/After] recv_buff = {:?}", mem);
     };
     Ok(())
   })
