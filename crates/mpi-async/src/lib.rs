@@ -1,4 +1,3 @@
-mod mpi;
 mod universe;
 mod communicator;
 mod request;
