@@ -1,21 +1,16 @@
+use std::ptr::addr_of_mut;
+
 use mpi_sys as ffi;
-use ffi::{
-  MPI_Datatype,
-  ompi_predefined_datatype_t,
-};
+use ffi::MPI_Datatype;
 
 pub trait DataType {
   fn to_ffi() -> MPI_Datatype;
 }
 
-unsafe fn cast(typ: &mut ompi_predefined_datatype_t) -> MPI_Datatype {
-  typ as *mut ffi::ompi_predefined_datatype_t as MPI_Datatype
-}
-
 impl DataType for f32 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_float)
+      addr_of_mut!(ffi::ompi_mpi_float) as MPI_Datatype
     }
   }
 }
@@ -23,7 +18,7 @@ impl DataType for f32 {
 impl DataType for f64 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_double)
+      addr_of_mut!(ffi::ompi_mpi_double) as MPI_Datatype
     }
   }
 }
@@ -31,7 +26,7 @@ impl DataType for f64 {
 impl DataType for u8 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_unsigned_char)
+      addr_of_mut!(ffi::ompi_mpi_uint8_t) as MPI_Datatype
     }
   }
 }
@@ -39,7 +34,7 @@ impl DataType for u8 {
 impl DataType for i8 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_signed_char)
+      addr_of_mut!(ffi::ompi_mpi_int8_t) as MPI_Datatype
     }
   }
 }
@@ -47,7 +42,7 @@ impl DataType for i8 {
 impl DataType for u16 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_unsigned_short)
+      addr_of_mut!(ffi::ompi_mpi_uint16_t) as MPI_Datatype
     }
   }
 }
@@ -55,7 +50,7 @@ impl DataType for u16 {
 impl DataType for i16 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_unsigned_short)
+      addr_of_mut!(ffi::ompi_mpi_int16_t) as MPI_Datatype
     }
   }
 }
@@ -63,7 +58,7 @@ impl DataType for i16 {
 impl DataType for u32 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_unsigned)
+      addr_of_mut!(ffi::ompi_mpi_uint32_t) as MPI_Datatype
     }
   }
 }
@@ -71,7 +66,7 @@ impl DataType for u32 {
 impl DataType for i32 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_int)
+      addr_of_mut!(ffi::ompi_mpi_int32_t) as MPI_Datatype
     }
   }
 }
@@ -79,7 +74,7 @@ impl DataType for i32 {
 impl DataType for u64 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_unsigned_long)
+      addr_of_mut!(ffi::ompi_mpi_uint64_t) as MPI_Datatype
     }
   }
 }
@@ -87,7 +82,7 @@ impl DataType for u64 {
 impl DataType for i64 {
   fn to_ffi() -> MPI_Datatype {
     unsafe {
-      cast(&mut ffi::ompi_mpi_long)
+      addr_of_mut!(ffi::ompi_mpi_int64_t) as MPI_Datatype
     }
   }
 }
