@@ -1,18 +1,21 @@
 .PHONY: FORCE
 
 .PHONY: all
-
-all: FORCE
-	./build.sh
+all: build;
 
 gen: FORCE
 	./crates/mpi-sys/gen.sh
 
 .PHONY: build
-build: all;
+build: FORCE
+	./build.sh
+
+.PHONY: build-release
+build-release: FORCE
+	./build.sh --release
 
 .PHONY: run
-run: build
+run: build-release
 	pjsub job.sh
 	pjstat
 
