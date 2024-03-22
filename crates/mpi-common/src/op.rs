@@ -9,10 +9,10 @@ impl Op {
   pub fn to_ffi(&self) -> ffi::MPI_Op {
     let op = unsafe {
       match self {
-        &Self::Null => &mut ffi::ompi_mpi_op_null,
-        &Self::Sum => &mut ffi::ompi_mpi_op_sum,
+        &Self::Null => addr_of_mut!(ffi::ompi_mpi_op_null),
+        &Self::Sum => addr_of_mut!(ffi::ompi_mpi_op_sum),
       }
     };
-    op as *mut ffi::ompi_predefined_op_t as ffi::MPI_Op
+    op as ffi::MPI_Op
   }
 }
