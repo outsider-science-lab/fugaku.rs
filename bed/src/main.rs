@@ -12,8 +12,8 @@ fn main() -> anyhow::Result<()> {
       let mut send_buff: [u64; 3] = [1, 2, 3];
       println!("[Send/Before] send_buff = {:?}", send_buff);
       tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
-      world.send(&mut send_buff, 1, 0)?.await?;
-      println!("[Send/After] send_buff = {:?}", send_buff);
+      let mem = world.send(&mut send_buff, 1, 0)?.await?;
+      println!("[Send/After] send_buff = {:?}", mem);
     } else {
       let mut recv_buff: [u64; 3] = [0, 0, 0];
       println!("[Recv/Before] recv_buff = {:?}", recv_buff);
