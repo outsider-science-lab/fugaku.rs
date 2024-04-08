@@ -33,7 +33,7 @@ impl Universe {
   }
   pub fn world(&mut self) -> Communicator {
     Communicator::new(unsafe {
-      addr_of_mut!(ffi::ompi_mpi_comm_world) as *mut ffi::ompi_predefined_communicator_t as MPI_Comm
+      addr_of_mut!(ffi::ompi_mpi_comm_world) as MPI_Comm
     })
   }
 }
