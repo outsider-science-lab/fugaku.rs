@@ -41,7 +41,7 @@ pub fn initialize() -> anyhow::Result<ThreadLevel> {
   })
 }
 
-pub fn initialize_thread(request: ThreadLevel) -> anyhow::Result<ThreadLevel> {
+pub fn initialize_thread(required: ThreadLevel) -> anyhow::Result<ThreadLevel> {
   if initialized()? {
     return Err(anyhow::Error::msg("MPI: Already initialized."))
   }
@@ -49,7 +49,8 @@ pub fn initialize_thread(request: ThreadLevel) -> anyhow::Result<ThreadLevel> {
     let mut provided = 0;
     // https://rookiehpc.github.io/mpi/docs/mpi_init_thread/
     let r = unsafe {
-      ffi::MPI_Init_thread(argc, argv, request.to_ffi(), &mut provided) as u32
+      let required = required.to_ffi();
+      ffi::MPI_Init_thread(argc, argv, required, &mut provided) as u32
     };
     match r {
       MPI_SUCCESS => Ok(ThreadLevel::from_ffi(provided)?),
