@@ -53,7 +53,7 @@ pub fn initialize_thread(request: ThreadLevel) -> anyhow::Result<ThreadLevel> {
     };
     match r {
       MPI_SUCCESS => Ok(ThreadLevel::from_ffi(provided)?),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Init] Unknown code: {}", r))),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Init_thread] Unknown code: {}", r))),
     }  
   })
 }
