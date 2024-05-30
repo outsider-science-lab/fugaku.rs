@@ -1,5 +1,6 @@
 [build]
 target = "aarch64-unknown-linux-gnu"
+rustflags = ["--cfg", "tokio_unstable"]
 
 [target.aarch64-unknown-linux-gnu]
 linker = "scripts/linker-aarch64"
