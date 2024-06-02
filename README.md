@@ -15,3 +15,11 @@
   - [MPI Documentation](https://rookiehpc.github.io/mpi/docs/)
 - [2.3. MPIのサンプル — Simulation programming guidebook for C++](https://lecture.ecc.u-tokyo.ac.jp/~hideo-t/tutorials/mpi/mpi_samples.html)
 - [MPIによる並列計算](https://www-is.amp.i.kyoto-u.ac.jp/data/sekido/20140521-1.pdf)
+
+## uTofu
+
+https://github.com/yutaka-ishikawa/mpich-tofu/blob/458e09c5f11586e6c42204fc5d89f49aa2224203/00DEBUG.txt#L51
+
+```shell
+/opt/FJSVxos/devkit/aarch64/rfs/usr/include/utofu.h
+```
