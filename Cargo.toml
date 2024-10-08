@@ -27,7 +27,7 @@ tokio = { version = "1.40.0", features = ["full"] }
 log = "0.4.22"
 
 [workspace.dependencies]
-anyhow = "1.0.86"
+anyhow = "1.0.89"
 futures = "0.3.31"
 log = "0.4.22"
 
