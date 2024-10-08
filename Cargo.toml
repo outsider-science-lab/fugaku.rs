@@ -28,8 +28,9 @@ log = "0.4.22"
 
 [workspace.dependencies]
 anyhow = "1.0.89"
-futures = "0.3.31"
+tokio = { version = "1.40.0", features = ["full"] }
 log = "0.4.22"
+futures = "0.3.31"
 
 [[example]]
 name = "hello-mpi"
