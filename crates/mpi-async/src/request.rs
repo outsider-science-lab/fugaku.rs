@@ -1,8 +1,6 @@
 // Doc:
 // - https://rookiehpc.github.io/mpi/docs/mpi_request/
 
-use std::borrow::Borrow;
-
 use mpi_common::malloc;
 
 use mpi_sys as ffi;
