@@ -1,6 +1,7 @@
 // Doc:
 // - https://rookiehpc.github.io/mpi/docs/mpi_comm/
 
+use mpi_common::{as_void_ptr, as_mut_void_ptr};
 use mpi_sys as ffi;
 use ffi::{
   MPI_Comm,
@@ -35,13 +36,13 @@ impl Communicator {
     mpi_common::communicator::abort(self.comm, error_code)
   }
   
-  pub fn send<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
+  pub fn send<T>(&mut self, send_buff: &[T], peer: usize, tag: i32) -> anyhow::Result<()>
     where T: DataType,
   {
     let r = unsafe {
       ffi::MPI_Send(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        buff.len() as i32,
+        as_void_ptr(send_buff),
+        send_buff.len() as i32,
         T::to_ffi(),
         peer as i32,
         tag,
@@ -54,14 +55,14 @@ impl Communicator {
     }
   }
 
-  pub fn recv<T>(&mut self, buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
+  pub fn recv<T>(&mut self, recv_buff: &mut [T], peer: usize, tag: i32) -> anyhow::Result<()>
     where T: DataType,
   {
-    let mut status: ffi::MPI_Status = malloc();
     let r = unsafe {
+      let mut status: ffi::MPI_Status = malloc();
       ffi::MPI_Recv(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        buff.len() as i32,
+        as_mut_void_ptr(recv_buff),
+        recv_buff.len() as i32,
         T::to_ffi(),
         peer as i32,
         tag,
@@ -76,22 +77,22 @@ impl Communicator {
   }
 
   pub fn send_recv<T, U>(
-    &mut self, send_buff: &mut [T], send_peer: usize, send_tag: usize,
+    &mut self, send_buff: &[T], send_peer: usize, send_tag: usize,
     recv_buff: &mut [U], recv_peer: usize, recv_tag: usize,
   ) -> anyhow::Result<()>
     where
       T: DataType,
       U: DataType,
   {
-    let mut status: ffi::MPI_Status = malloc();
     let r = unsafe {
+      let mut status: ffi::MPI_Status = malloc();
       ffi::MPI_Sendrecv(
-        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        as_void_ptr(send_buff),
         send_buff.len() as i32,
         T::to_ffi(),
         send_peer as i32,
         send_tag as i32,
-        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        as_mut_void_ptr(recv_buff),
         recv_buff.len() as i32,
         U::to_ffi(),
         recv_peer as i32,
@@ -107,19 +108,18 @@ impl Communicator {
   }
 
   pub fn send_recv_replace<T>(
-    &mut self, buff: &mut [T],
+    &mut self, send_recv_buff: &mut [T],
     send_peer: usize, send_tag: usize,
     recv_peer: usize, recv_tag: usize,
   ) -> anyhow::Result<()>
     where
       T: DataType,
   {
-    let mut status: ffi::MPI_Status = malloc();
-
     let r = unsafe {
+      let mut status: ffi::MPI_Status = malloc();
       ffi::MPI_Sendrecv_replace(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        buff.len() as i32,
+        as_mut_void_ptr(send_recv_buff),
+        send_recv_buff.len() as i32,
         T::to_ffi(),
         send_peer as i32,
         send_tag as i32,
@@ -140,7 +140,7 @@ impl Communicator {
   {
     let r = unsafe {
       ffi::MPI_Bcast(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void, 
+        as_mut_void_ptr(buff),
         buff.len() as i32,
         T::to_ffi(),
         root as i32,
@@ -153,7 +153,7 @@ impl Communicator {
     }
   }
 
-  pub fn scatter<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
+  pub fn scatter<T>(&mut self, send_buff: &[T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
     where T: DataType,
   {
     let size = self.size()?;
@@ -167,10 +167,10 @@ impl Communicator {
 
     let r = unsafe {
       ffi::MPI_Scatter(
-        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        recv_buff.len() as i32,
+        as_void_ptr(send_buff),
+        send_buff.len() as i32,
         T::to_ffi(),
-        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        as_mut_void_ptr(recv_buff),
         recv_buff.len() as i32,
         T::to_ffi(),
         root as i32,
@@ -183,7 +183,7 @@ impl Communicator {
     }
   }
 
-  pub fn gather<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
+  pub fn gather<T>(&mut self, send_buff: &[T], recv_buff: &mut [T], root: usize) -> anyhow::Result<()>
     where T: DataType,
   {
     let size = self.size()?;
@@ -196,11 +196,11 @@ impl Communicator {
     }
     let r = unsafe {
       ffi::MPI_Gather(
-        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        as_void_ptr(send_buff),
         send_buff.len() as i32,
         T::to_ffi(),
-        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        send_buff.len() as i32,
+        as_mut_void_ptr(recv_buff),
+        recv_buff.len() as i32,
         T::to_ffi(),
         root as i32,
         self.comm,
@@ -212,7 +212,7 @@ impl Communicator {
     }
   }
 
-  pub fn reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: Op, root: usize) -> anyhow::Result<()>
+  pub fn reduce<T>(&mut self, send_buff: &[T], recv_buff: &mut [T], op: Op, root: usize) -> anyhow::Result<()>
     where T: DataType,
   {
     let rank = self.rank()?;
@@ -225,8 +225,8 @@ impl Communicator {
 
     let r = unsafe {
       ffi::MPI_Reduce(
-        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        as_void_ptr(send_buff),
+        as_mut_void_ptr(recv_buff),
         count as i32,
         T::to_ffi(),
         op.to_ffi(),
@@ -240,7 +240,7 @@ impl Communicator {
     }
   }
 
-  pub fn all_reduce<T>(&mut self, send_buff: &mut [T], recv_buff: &mut [T], op: Op) -> anyhow::Result<()>
+  pub fn all_reduce<T>(&mut self, send_buff: &[T], recv_buff: &mut [T], op: Op) -> anyhow::Result<()>
     where T: DataType,
   {
     if send_buff.len() != recv_buff.len() {
@@ -249,11 +249,31 @@ impl Communicator {
     let count = send_buff.len();
     let r = unsafe {
       ffi::MPI_Allreduce(
-        send_buff.as_mut_ptr() as *mut std::os::raw::c_void,
-        recv_buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        as_void_ptr(send_buff),
+        as_mut_void_ptr(recv_buff),
         count as i32,
         T::to_ffi(),
         op.to_ffi(),
+        self.comm,
+      ) as u32
+    };
+    match r {
+      MPI_SUCCESS => Ok(()),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Allreduce] Unknown code: {}", r))),
+    }
+  }
+
+  pub fn all_to_all<T>(&mut self, send_buff: &[T], recv_buff: &mut [T]) -> anyhow::Result<()>
+    where T: DataType,
+  {
+    let r = unsafe {
+      ffi::MPI_Alltoall(
+        as_void_ptr(send_buff),
+        send_buff.len() as i32,
+        T::to_ffi(),
+        as_mut_void_ptr(recv_buff),
+        recv_buff.len() as i32,
+        T::to_ffi(),
         self.comm,
       ) as u32
     };
