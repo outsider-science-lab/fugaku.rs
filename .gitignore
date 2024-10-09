@@ -2,6 +2,7 @@
 /job.sh.*.err
 /job.sh.*.out
 /job.sh.*.stats
+/.stdin.*
 
 # Created by https://www.toptal.com/developers/gitignore/api/clion,rust,VisualStudioCode
 # Edit at https://www.toptal.com/developers/gitignore?templates=clion,rust,VisualStudioCode

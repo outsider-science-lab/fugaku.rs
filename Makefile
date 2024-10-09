@@ -25,7 +25,7 @@ ps: FORCE
 
 .PHONY: clean-jobs
 clean-jobs: FORCE
-	rm -rf job.sh.*.err job.sh.*.out ./output.* ./*.stats
+	rm -rf job.sh.*.err job.sh.*.out ./output.* ./*.stats ./.sdtin.*
 
 .PHONY: clean-build
 clean-build: FORCE
