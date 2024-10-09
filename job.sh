@@ -18,5 +18,5 @@
 
 source /vol0004/apps/oss/llvm-v17.0.2/init.sh
 
-llio_transfer ./target/aarch64-unknown-linux-gnu/release/bed
+# llio_transfer ./target/aarch64-unknown-linux-gnu/release/bed
 mpiexec ./target/aarch64-unknown-linux-gnu/release/bed
