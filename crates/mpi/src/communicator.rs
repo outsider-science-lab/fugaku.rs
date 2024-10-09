@@ -77,7 +77,8 @@ impl Communicator {
   }
 
   pub fn send_recv<T, U>(
-    &mut self, send_buff: &[T], send_peer: usize, send_tag: usize,
+    &mut self,
+    send_buff: &[T], send_peer: usize, send_tag: usize,
     recv_buff: &mut [U], recv_peer: usize, recv_tag: usize,
   ) -> anyhow::Result<()>
     where
