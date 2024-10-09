@@ -6,7 +6,7 @@ use ffi::{
 };
 
 use crate::request::Request;
-use mpi_common::{DataType, malloc};
+use mpi_common::{as_mut_void_ptr, as_void_ptr, malloc, DataType};
 
 pub struct Communicator {
   comm: MPI_Comm,
@@ -39,7 +39,7 @@ impl Communicator {
     let (req, r) = unsafe {
       let mut req: MPI_Request = malloc();
       let r = ffi::MPI_Isend(
-        buff.as_ptr() as *mut std::os::raw::c_void,
+        as_void_ptr(buff),
         buff.len() as i32,
         T::to_ffi(),
         peer as i32,
@@ -61,7 +61,7 @@ impl Communicator {
     let (req, r) = unsafe {
       let mut req: MPI_Request = malloc();
       let r = ffi::MPI_Irecv(
-        buff.as_mut_ptr() as *mut std::os::raw::c_void,
+        as_mut_void_ptr(buff),
         buff.len() as i32,
         T::to_ffi(),
         peer as i32,
