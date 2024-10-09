@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 anyhow = { workspace = true }
 tokio = { workspace = true }
-mpi-async = { path = "../crates/mpi-async" }
+mpi = { path = "../crates/mpi" }
