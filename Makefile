@@ -15,7 +15,7 @@ build-release: FORCE
 	./build.sh --release
 
 .PHONY: run
-run: build-release
+run: build-release clean-jobs
 	pjsub job.sh
 	pjstat
 
