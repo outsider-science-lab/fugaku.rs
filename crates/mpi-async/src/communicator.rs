@@ -36,9 +36,9 @@ impl Communicator {
   pub fn send<'v, T>(&mut self, buff: &'v [T], peer: usize, tag: i32) -> anyhow::Result<Request<'v, [T]>>
     where T: DataType,
   {
-    let mut req: MPI_Request = malloc();
-    let r = unsafe {
-      ffi::MPI_Isend(
+    let (req, r) = unsafe {
+      let mut req: MPI_Request = malloc();
+      let r = ffi::MPI_Isend(
         buff.as_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
         T::to_ffi(),
@@ -46,7 +46,8 @@ impl Communicator {
         tag,
         self.comm,
         &mut req,
-      ) as u32
+      ) as u32;
+      (req, r)
     };
     match r {
       MPI_SUCCESS => Ok(Request::<'v, [T]>::new(buff, req)),
@@ -57,9 +58,9 @@ impl Communicator {
   pub fn recv<'v, T>(&mut self, buff: &'v mut [T], peer: usize, tag: i32) -> anyhow::Result<Request<'v, [T]>>
     where T: DataType,
   {
-    let mut req: MPI_Request = malloc();
-    let r = unsafe {
-      ffi::MPI_Irecv(
+    let (req, r) = unsafe {
+      let mut req: MPI_Request = malloc();
+      let r = ffi::MPI_Irecv(
         buff.as_mut_ptr() as *mut std::os::raw::c_void,
         buff.len() as i32,
         T::to_ffi(),
@@ -67,7 +68,8 @@ impl Communicator {
         tag,
         self.comm,
         &mut req,
-      ) as u32
+      ) as u32;
+      (req, r)
     };
     match r {
       MPI_SUCCESS => Ok(Request::<'v, [T]>::new(buff, req)),

@@ -47,9 +47,9 @@ impl <'v, T: ?Sized> Request<'v, T> {
   }
 
   fn test(&mut self) -> anyhow::Result<bool> {
-    let mut status: MPI_Status = malloc();
     let mut ready = 0;
     let r = unsafe {
+      let mut status: MPI_Status = malloc();
       // https://www.open-mpi.org/doc/v4.1/man3/MPI_Test.3.php
       ffi::MPI_Test(
         &mut self.req,
