@@ -1,7 +1,8 @@
 #!/bin/bash
-#PJM -L "node=2"
-#PJM --mpi "shape=2"
+# https://www.fugaku.r-ccs.riken.jp/doc_root/ja/user_guides/use_latest/MPI/index.html
+#PJM -L "node=3"
 #PJM -L "rscgrp=small"
+#PJM --mpi "shape=3"
 #PJM -L "elapse=10:00"
 #PJM -g hp230405
 #PJM -s
