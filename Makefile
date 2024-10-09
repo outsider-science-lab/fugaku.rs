@@ -23,7 +23,16 @@ run: build-release
 ps: FORCE
 	@pjstat
 
-.PHONY: clean
-clean: FORCE
-	rm -rf ./target/
+.PHONY: clean-jobs
+clean-jobs: FORCE
 	rm -rf job.sh.*.err job.sh.*.out ./output.* ./*.stats
+
+.PHONY: clean-build
+clean-build: FORCE
+	rm -rf ./target/
+
+.PHONY: clean
+clean: clean-jobs
+
+.PHONY: clean-all
+clean-all: clean clean-build
