@@ -36,9 +36,9 @@ impl Communicator {
   pub fn send<'v, T>(&mut self, buff: &'v [T], peer: usize, tag: i32) -> anyhow::Result<Request<'v, [T]>>
     where T: DataType,
   {
-    let (req, r) = unsafe {
+    let (req, result) = unsafe {
       let mut req: MPI_Request = malloc();
-      let r = ffi::MPI_Isend(
+      let result = ffi::MPI_Isend(
         as_void_ptr(buff),
         buff.len() as i32,
         T::to_ffi(),
@@ -47,20 +47,20 @@ impl Communicator {
         self.comm,
         &mut req,
       ) as u32;
-      (req, r)
+      (req, result)
     };
-    match r {
+    match result {
       MPI_SUCCESS => Ok(Request::<'v, [T]>::new(buff, req)),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", r))),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", result))),
     }
   }
 
   pub fn recv<'v, T>(&mut self, buff: &'v mut [T], peer: usize, tag: i32) -> anyhow::Result<Request<'v, [T]>>
     where T: DataType,
   {
-    let (req, r) = unsafe {
+    let (req, result) = unsafe {
       let mut req: MPI_Request = malloc();
-      let r = ffi::MPI_Irecv(
+      let result = ffi::MPI_Irecv(
         as_mut_void_ptr(buff),
         buff.len() as i32,
         T::to_ffi(),
@@ -69,11 +69,11 @@ impl Communicator {
         self.comm,
         &mut req,
       ) as u32;
-      (req, r)
+      (req, result)
     };
-    match r {
+    match result {
       MPI_SUCCESS => Ok(Request::<'v, [T]>::new(buff, req)),
-      _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", r))),
+      _ => Err(anyhow::Error::msg(format!("[MPI_Send] Unknown code: {}", result))),
     }
   }
 }
