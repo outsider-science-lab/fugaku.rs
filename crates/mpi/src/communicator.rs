@@ -282,16 +282,21 @@ impl Communicator {
     }
   }
 
-  pub fn all_to_all<T>(&mut self, send_buff: &[T], recv_buff: &mut [T]) -> anyhow::Result<()>
+  pub fn all_to_all<T>(
+    &mut self,
+    send_buff: &[T], send_count: usize,
+    recv_buff: &mut [T], recv_count: usize,
+  ) -> anyhow::Result<()>
     where T: DataType,
   {
     let r = unsafe {
+      // https://learn.microsoft.com/en-us/message-passing-interface/mpi-alltoall-function
       ffi::MPI_Alltoall(
         as_void_ptr(send_buff),
-        send_buff.len() as i32,
+        send_count as i32,
         T::to_ffi(),
         as_mut_void_ptr(recv_buff),
-        recv_buff.len() as i32,
+        recv_count as i32,
         T::to_ffi(),
         self.comm,
       ) as u32
