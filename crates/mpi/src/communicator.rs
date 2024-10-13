@@ -13,6 +13,8 @@ use mpi_common::malloc;
 
 pub struct Communicator {
   comm: MPI_Comm,
+  size: Some<usize>,
+  rank: Some<usize>,
 }
 
 impl Communicator {
@@ -21,15 +23,31 @@ impl Communicator {
   ) -> Self {
     Self {
       comm,
+      size: None,
+      rank: None,
     }
   }
 
-  pub fn size(&self) -> anyhow::Result<usize> {
-    mpi_common::communicator::size(self.comm)
+  pub fn size(&mut self) -> anyhow::Result<usize> {
+    match self.size {
+      Some(size) => Ok(size),
+      None => {
+        let size: usize = mpi_common::communicator::size(self.comm)?;
+        self.size = Some(size);
+        Ok(size)
+      }
+    }
   }
 
   pub fn rank(&self) -> anyhow::Result<usize> {
-    mpi_common::communicator::rank(self.comm)
+    match self.rank {
+      Some(rank) => Ok(rank),
+      None => {
+        let rank: usize = mpi_common::communicator::rank(self.comm)?;
+        self.rank = Some(rank);
+        Ok(rank)
+      }
+    }
   }
 
   pub fn abort(&self, error_code: i32) -> anyhow::Result<()> {
