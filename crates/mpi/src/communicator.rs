@@ -13,8 +13,8 @@ use mpi_common::malloc;
 
 pub struct Communicator {
   comm: MPI_Comm,
-  size: Some<usize>,
-  rank: Some<usize>,
+  size: Option<usize>,
+  rank: Option<usize>,
 }
 
 impl Communicator {
@@ -39,7 +39,7 @@ impl Communicator {
     }
   }
 
-  pub fn rank(&self) -> anyhow::Result<usize> {
+  pub fn rank(&mut self) -> anyhow::Result<usize> {
     match self.rank {
       Some(rank) => Ok(rank),
       None => {
