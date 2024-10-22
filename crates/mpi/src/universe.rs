@@ -1,5 +1,3 @@
-use std::ptr::addr_of_mut;
-
 use log::error;
 use mpi_sys as ffi;
 use ffi::{
@@ -31,9 +29,7 @@ impl Universe {
     self.level
   }
   pub fn world(&mut self) -> Communicator {
-    Communicator::new(unsafe {
-      addr_of_mut!(ffi::ompi_mpi_comm_world) as MPI_Comm
-    })
+    Communicator::new(&raw mut ffi::ompi_mpi_comm_world as MPI_Comm)
   }
 }
 
