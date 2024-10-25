@@ -28,6 +28,7 @@ impl Universe {
   pub fn level(&self) -> ThreadLevel {
     self.level
   }
+
   pub fn world(&mut self) -> Communicator {
     Communicator::new(&raw mut ffi::ompi_mpi_comm_world as MPI_Comm)
   }
