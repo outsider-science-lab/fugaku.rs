@@ -1,5 +1,3 @@
-use std::ptr::addr_of_mut;
-
 use log::error;
 use mpi_sys as ffi;
 use ffi::{
