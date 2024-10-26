@@ -35,24 +35,22 @@ pub enum Op {
 
 impl Op {
   pub fn to_ffi(&self) -> ffi::MPI_Op {
-    let op = unsafe {
-      match self {
-        &Self::Null => addr_of_mut!(ffi::ompi_mpi_op_null),
-        &Self::BitAnd => addr_of_mut!(ffi::ompi_mpi_op_band),
-        &Self::BitOr => addr_of_mut!(ffi::ompi_mpi_op_bor),
-        &Self::BitXor => addr_of_mut!(ffi::ompi_mpi_op_bxor),
-        &Self::LogicalAnd => addr_of_mut!(ffi::ompi_mpi_op_land),
-        &Self::LogicalOr => addr_of_mut!(ffi::ompi_mpi_op_lor),
-        &Self::LogicalXor => addr_of_mut!(ffi::ompi_mpi_op_lxor),
-        &Self::Max => addr_of_mut!(ffi::ompi_mpi_op_max),
-        &Self::MaxLocation => addr_of_mut!(ffi::ompi_mpi_op_maxloc),
-        &Self::Min => addr_of_mut!(ffi::ompi_mpi_op_min),
-        &Self::MinLocation => addr_of_mut!(ffi::ompi_mpi_op_minloc),
-        &Self::Sum => addr_of_mut!(ffi::ompi_mpi_op_sum),
-        &Self::Prod => addr_of_mut!(ffi::ompi_mpi_op_prod),
-        &Self::Replace => addr_of_mut!(ffi::ompi_mpi_op_replace),
-        &Self::NoOp => addr_of_mut!(ffi::ompi_mpi_op_no_op),
-      }
+    let op = match self {
+      &Self::Null => &raw mut ffi::ompi_mpi_op_null,
+      &Self::BitAnd => &raw mut ffi::ompi_mpi_op_band,
+      &Self::BitOr => &raw mut ffi::ompi_mpi_op_bor,
+      &Self::BitXor => &raw mut ffi::ompi_mpi_op_bxor,
+      &Self::LogicalAnd => &raw mut ffi::ompi_mpi_op_land,
+      &Self::LogicalOr => &raw mut ffi::ompi_mpi_op_lor,
+      &Self::LogicalXor => &raw mut ffi::ompi_mpi_op_lxor,
+      &Self::Max => &raw mut ffi::ompi_mpi_op_max,
+      &Self::MaxLocation => &raw mut ffi::ompi_mpi_op_maxloc,
+      &Self::Min => &raw mut ffi::ompi_mpi_op_min,
+      &Self::MinLocation => &raw mut ffi::ompi_mpi_op_minloc,
+      &Self::Sum => &raw mut ffi::ompi_mpi_op_sum,
+      &Self::Prod => &raw mut ffi::ompi_mpi_op_prod,
+      &Self::Replace => &raw mut ffi::ompi_mpi_op_replace,
+      &Self::NoOp => &raw mut ffi::ompi_mpi_op_no_op,
     };
     op as ffi::MPI_Op
   }
