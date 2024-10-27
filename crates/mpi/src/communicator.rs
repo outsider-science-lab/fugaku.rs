@@ -291,6 +291,7 @@ impl Communicator {
   {
     let r = unsafe {
       // https://learn.microsoft.com/en-us/message-passing-interface/mpi-alltoall-function
+      // https://www.mpich.org/static/docs/v3.4/www3/MPI_Alltoall.html
       ffi::MPI_Alltoall(
         as_void_ptr(send_buff),
         send_count as i32,
