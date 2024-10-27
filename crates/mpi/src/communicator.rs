@@ -284,20 +284,32 @@ impl Communicator {
 
   pub fn all_to_all<T>(
     &mut self,
-    send_buff: &[T], send_count: usize,
-    recv_buff: &mut [T], recv_count: usize,
+    send_buff: &[T],
+    recv_buff: &mut [T],
+    count: usize,
   ) -> anyhow::Result<()>
     where T: DataType,
   {
+    let size = self.size()?;
+    if send_buff.len() < size * count {
+      let msg = format!("Buffer size not enough: send_buff.len() = {} < {}", send_buff.len(), size * count);
+      return Err(anyhow::Error::msg(msg));
+    }
+    if recv_buff.len() < size * count {
+      let msg = format!("Buffer size not enough: recv_buff.len() = {} < {}", recv_buff.len(), size * count);
+      return Err(anyhow::Error::msg(msg));
+    }
     let r = unsafe {
       // https://learn.microsoft.com/en-us/message-passing-interface/mpi-alltoall-function
       // https://www.mpich.org/static/docs/v3.4/www3/MPI_Alltoall.html
+      // https://rookiehpc.org/mpi/docs/mpi_alltoall/index.html
+      // https://www.open-mpi.org/doc/v4.0/man3/MPI_Alltoall.3.php
       ffi::MPI_Alltoall(
         as_void_ptr(send_buff),
-        send_count as i32,
+        count as i32,
         T::to_ffi(),
         as_mut_void_ptr(recv_buff),
-        recv_count as i32,
+        count as i32,
         T::to_ffi(),
         self.comm,
       ) as u32
