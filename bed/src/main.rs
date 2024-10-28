@@ -17,6 +17,7 @@ fn main() -> anyhow::Result<()> {
     world.all_to_all(
       &send_buff,
       &mut recv_buff,
+      3,
     )?;
     println!("[Send/After] recv_buff = {:?}", recv_buff);
   }
