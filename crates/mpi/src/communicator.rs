@@ -291,12 +291,13 @@ impl Communicator {
     where T: DataType,
   {
     let size = self.size()?;
-    if send_buff.len() < size * count {
-      let msg = format!("Buffer size not enough: (send_buff.len() = {}) < (required = {})", send_buff.len(), size * count);
+    let required = size * count;
+    if send_buff.len() < required {
+      let msg = format!("Buffer size not enough: (send_buff.len() = {}) < (required = {})", send_buff.len(), required);
       return Err(anyhow::Error::msg(msg));
     }
-    if recv_buff.len() < size * count {
-      let msg = format!("Buffer size not enough: (recv_buff.len()) = {} < (required = {})", recv_buff.len(), size * count);
+    if recv_buff.len() < required {
+      let msg = format!("Buffer size not enough: (recv_buff.len()) = {} < (required = {})", recv_buff.len(), required);
       return Err(anyhow::Error::msg(msg));
     }
     let r = unsafe {
