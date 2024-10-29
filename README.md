@@ -4,7 +4,7 @@ Rust libs for Fugaku, such as MPI.
 
 GPLv3 or later.
 
-For commercial use, please [contact us](mailto:ryoh@outsider-science-lab.com).
+For commercial use, please [contact us](mailto:contact@outsider-science-lab.com).
 
 # References
 
