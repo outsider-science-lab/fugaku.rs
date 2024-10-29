@@ -1,3 +1,11 @@
+Rust libs for Fugaku, such as MPI.
+
+# License
+
+GPLv3 or later.
+
+For commercial use, please [contact us](mailto:ryoh@outsider-science-lab.com).
+
 # References
 
 ## Official
