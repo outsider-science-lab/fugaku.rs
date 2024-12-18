@@ -22,13 +22,13 @@ members = [
 mpi-sys = { path="crates/mpi-sys" }
 mpi-async = { path="crates/mpi-async" }
 mpi = { path="crates/mpi" }
-anyhow = "1.0.93"
-tokio = { version = "1.41.1", features = ["full"] }
+anyhow = "1.0.94"
+tokio = { version = "1.42.0", features = ["full"] }
 log = "0.4.22"
 
 [workspace.dependencies]
-anyhow = "1.0.93"
-tokio = { version = "1.41.1", features = ["full"] }
+anyhow = "1.0.94"
+tokio = { version = "1.42.0", features = ["full"] }
 log = "0.4.22"
 futures = "0.3.31"
 
